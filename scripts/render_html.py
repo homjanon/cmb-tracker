@@ -56,7 +56,7 @@ def render(rows, fund, t0, out_path):
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>谷子地五维 · 五大行追踪</title>
+<title>招招五维 · 五大行追踪</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
  *{{box-sizing:border-box}} body{{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
@@ -84,7 +84,7 @@ def render(rows, fund, t0, out_path):
  @media(max-width:720px){{.grid{{grid-template-columns:1fr}}}}
 </style></head>
 <body><div class="wrap">
-<header><h1>谷子地五维模型 · 五大行每日追踪</h1>
+<header><h1>招招五维模型 · 五大行每日追踪</h1>
 <div class="meta">更新时间：{date_str} ｜ 标的：招商/工商/建设/农业/中国/宁波（交行已排除）｜ 数据源：腾讯/新浪/akshare/baostock</div></header>
 
 <div class="cards">
@@ -105,7 +105,7 @@ def render(rows, fund, t0, out_path):
 </div>
 
 <div class="note">
-<b>方法论</b>：评分采用谷子地五维模型（资产质量/负债结构/中间业务/资本实力/管理层，每维0-20，总分0-100）。
+<b>方法论</b>：评分采用招招五维模型（资产质量/负债结构/中间业务/资本实力/管理层，每维0-20，总分0-100）。
 财务字段（不良率、拨备覆盖率、非息占比、资本充足率、ROE等）为季度数据，来自最近一期财报，每日不更新；
 现价/PE/PB/股息率为每日盘后刷新。买入信号基于 PB 破净程度与股息率，结合五维总分判定。
 <b>免责</b>：本项目仅作个人研究记录，不构成任何投资建议。
