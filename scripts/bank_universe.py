@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-银行标的清单（谷子地五维模型追踪对象）
+银行标的清单（招招五维模型追踪对象）
 
 标的范围（用户决策 2026-07-12）：
   - 6 只 A 股：招商银行 / 工商银行 / 建设银行 / 农业银行 / 中国银行 / 宁波银行
-  - 交通银行：默认排除（估值陷阱，谷子地点评明确不推荐）
+  - 交通银行：默认排除（估值陷阱，通常不推荐）
   - 招商银行 H（03968）：若数据源可稳定获取则纳入，否则取消（INCLUDE_H 开关）
 
 每只银行需要三类代码：
   - tencent : 腾讯行情 qt.gtimg.cn 的代码（sh/sz/r_hk 前缀）
   - baostock: baostock 历史数据代码（sh./sz. 前缀，港股不支持）
   - akshare : akshare 财务接口 symbol（SH/SZ 前缀，港股单独处理）
+
+valuation_style：
+  - "yield"  ：收益型估值（PB 破净 + 股息率），适用于高分红的招行/四大行
+  - "growth" ：成长型估值（PE + ROE），适用于高 ROE、低分红率的股份行/城商行（如宁波银行）
 """
 from dataclasses import dataclass, field
 
@@ -28,6 +32,7 @@ class Bank:
     akshare: str       # akshare 财务 symbol
     is_hk: bool = False
     color: str = "#5470c6"   # 图表配色
+    valuation_style: str = "yield"   # 买入信号估值风格
 
 # ---- A 股六大行 ----
 BANKS_A = [
@@ -36,7 +41,9 @@ BANKS_A = [
     Bank("601939", "建设银行", "建行", "sh601939", "sh.601939", "SH601939", color="#61a0a8"),
     Bank("601288", "农业银行", "农行", "sh601288", "sh.601288", "SH601288", color="#d48265"),
     Bank("601988", "中国银行", "中行", "sh601988", "sh.601988", "SH601988", color="#91c7ae"),
-    Bank("002142", "宁波银行", "宁波", "sz002142", "sz.002142", "SZ002142", color="#749f83"),
+    # 宁波银行：高 ROE 成长型城商行，买入信号用 PE+ROE 而非 PB+股息率
+    Bank("002142", "宁波银行", "宁波", "sz002142", "sz.002142", "SZ002142",
+         color="#749f83", valuation_style="growth"),
 ]
 
 # ---- 招商银行 H 股（可选）----
@@ -54,4 +61,4 @@ def tencent_codes() -> list:
 
 if __name__ == "__main__":
     for b in all_banks():
-        print(b.code, b.name, b.tencent, b.baostock, b.akshare)
+        print(b.code, b.name, b.tencent, b.baostock, b.akshare, b.valuation_style)
