@@ -1,4 +1,4 @@
-name: 谷子地五维·五大行每日追踪
+name: 招招五维·五大行每日追踪
 
 on:
   schedule:
@@ -10,7 +10,7 @@ permissions:
   contents: write           # 自动 commit history.jsonl + docs
 
 concurrency:
-  group: guzidi-bank-tracker
+  group: cmb-tracker
   cancel-in-progress: false
 
 jobs:
