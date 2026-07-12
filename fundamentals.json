@@ -9,9 +9,7 @@
       "current_deposit_ratio",
       "retail_deposit_ratio",
       "rorwa",
-      "div_payout",
-      "retail_focus",
-      "div_ps"
+      "retail_focus"
     ],
     "npl": 1.37,
     "provision_coverage": 437.0,
@@ -21,14 +19,15 @@
     "rorwa": 2.4,
     "core_tier1": 10.68,
     "roe": 13.48,
-    "div_payout": 33.0,
+    "div_payout": 33.8,
     "retail_focus": 1.0,
     "bvps": 44.9,
-    "div_ps": 2.0,
-    "eps": 1.49,
+    "div_ps": 2.016,
+    "eps": 5.96,
     "code": "600036",
     "name": "招商银行",
-    "nii_as_of": "20260331"
+    "nii_as_of": "20260331",
+    "div_as_of": "20260713"
   },
   "601398": {
     "as_of": "2026Q1",
@@ -40,9 +39,7 @@
       "current_deposit_ratio",
       "retail_deposit_ratio",
       "rorwa",
-      "div_payout",
-      "retail_focus",
-      "div_ps"
+      "retail_focus"
     ],
     "npl": 1.38,
     "provision_coverage": 213.0,
@@ -52,14 +49,15 @@
     "rorwa": 1.45,
     "core_tier1": 13.55,
     "roe": 8.83,
-    "div_payout": 30.0,
+    "div_payout": 32.3,
     "retail_focus": 0.4,
     "bvps": 11.062,
-    "div_ps": 0.32,
-    "eps": 0.24,
+    "div_ps": 0.31,
+    "eps": 0.96,
     "code": "601398",
     "name": "工商银行",
-    "nii_as_of": "20260331"
+    "nii_as_of": "20260331",
+    "div_as_of": "20260713"
   },
   "601939": {
     "as_of": "2026Q1",
@@ -71,9 +69,7 @@
       "current_deposit_ratio",
       "retail_deposit_ratio",
       "rorwa",
-      "div_payout",
-      "retail_focus",
-      "div_ps"
+      "retail_focus"
     ],
     "npl": 1.36,
     "provision_coverage": 240.0,
@@ -83,14 +79,15 @@
     "rorwa": 1.42,
     "core_tier1": 13.87,
     "roe": 9.85,
-    "div_payout": 30.0,
+    "div_payout": 29.5,
     "retail_focus": 0.4,
     "bvps": 13.56,
-    "div_ps": 0.42,
-    "eps": 0.33,
+    "div_ps": 0.389,
+    "eps": 1.32,
     "code": "601939",
     "name": "建设银行",
-    "nii_as_of": "20260331"
+    "nii_as_of": "20260331",
+    "div_as_of": "20260713"
   },
   "601288": {
     "as_of": "2026Q1",
@@ -102,9 +99,7 @@
       "current_deposit_ratio",
       "retail_deposit_ratio",
       "rorwa",
-      "div_payout",
-      "retail_focus",
-      "div_ps"
+      "retail_focus"
     ],
     "npl": 1.35,
     "provision_coverage": 305.0,
@@ -114,14 +109,15 @@
     "rorwa": 1.38,
     "core_tier1": 11.28,
     "roe": 10.59,
-    "div_payout": 30.0,
+    "div_payout": 46.9,
     "retail_focus": 0.6,
     "bvps": 8.076,
-    "div_ps": 0.25,
-    "eps": 0.2,
+    "div_ps": 0.375,
+    "eps": 0.8,
     "code": "601288",
     "name": "农业银行",
-    "nii_as_of": "20260331"
+    "nii_as_of": "20260331",
+    "div_as_of": "20260713"
   },
   "601988": {
     "as_of": "2026Q1",
@@ -133,9 +129,7 @@
       "current_deposit_ratio",
       "retail_deposit_ratio",
       "rorwa",
-      "div_payout",
-      "retail_focus",
-      "div_ps"
+      "retail_focus"
     ],
     "npl": 1.27,
     "provision_coverage": 215.0,
@@ -145,14 +139,15 @@
     "rorwa": 1.28,
     "core_tier1": 10.43,
     "roe": 8.46,
-    "div_payout": 30.0,
+    "div_payout": 31.4,
     "retail_focus": 0.3,
     "bvps": 8.483,
-    "div_ps": 0.25,
-    "eps": 0.18,
+    "div_ps": 0.226,
+    "eps": 0.72,
     "code": "601988",
     "name": "中国银行",
-    "nii_as_of": "20260331"
+    "nii_as_of": "20260331",
+    "div_as_of": "20260713"
   },
   "002142": {
     "as_of": "2026Q1",
@@ -164,9 +159,7 @@
       "current_deposit_ratio",
       "retail_deposit_ratio",
       "rorwa",
-      "div_payout",
-      "retail_focus",
-      "div_ps"
+      "retail_focus"
     ],
     "npl": 0.76,
     "provision_coverage": 400.0,
@@ -176,13 +169,14 @@
     "rorwa": 1.35,
     "core_tier1": 9.8,
     "roe": 14.38,
-    "div_payout": 22.0,
+    "div_payout": 42.3,
     "retail_focus": 0.7,
     "bvps": 35.205,
-    "div_ps": 0.65,
-    "eps": 1.24,
+    "div_ps": 2.1,
+    "eps": 4.96,
     "code": "002142",
     "name": "宁波银行",
-    "nii_as_of": "20260331"
+    "nii_as_of": "20260331",
+    "div_as_of": "20260713"
   }
 }

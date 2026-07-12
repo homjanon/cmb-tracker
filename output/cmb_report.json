@@ -1,13 +1,13 @@
 {
   "tracker": "cmb-tracker",
   "model": "招招五维模型",
-  "generated_at": "2026-07-12T20:31:13.325398+08:00",
-  "data_date": "2026-07-12",
+  "generated_at": "2026-07-13T00:11:20.236641+08:00",
+  "data_date": "2026-07-13",
   "summary": {
     "total_banks": 6,
     "strong_buy": 0,
-    "buy": 6,
-    "hold": 0,
+    "buy": 4,
+    "hold": 2,
     "reduce": 0
   },
   "banks": [
@@ -19,21 +19,21 @@
       "price": 36.88,
       "pe": 6.17,
       "pb": 0.821,
-      "div_yield": 5.423,
-      "score_total": 80.9,
+      "div_yield": 5.466,
+      "score_total": 81.0,
       "score_dims": {
         "asset_quality": 14.5,
         "liability": 14.8,
         "intermediary": 17.7,
         "capital": 17.4,
-        "management": 16.5
+        "management": 16.6
       },
       "signal": "BUY",
       "signal_cn": "买入",
       "valuation_style": "yield",
       "zone_low": 31.44,
       "zone_high": 40.43,
-      "reason": "PB0.82破净附近 + 股息5.4%，低估"
+      "reason": "PB0.82破净附近 + 股息5.5%，低估"
     },
     {
       "code": "601398",
@@ -43,21 +43,21 @@
       "price": 7.33,
       "pe": 7.035,
       "pb": 0.663,
-      "div_yield": 4.366,
-      "score_total": 51.4,
+      "div_yield": 4.229,
+      "score_total": 52.2,
       "score_dims": {
         "asset_quality": 9.6,
         "liability": 8.7,
         "intermediary": 11.4,
         "capital": 14.5,
-        "management": 7.2
+        "management": 8.0
       },
       "signal": "BUY",
       "signal_cn": "买入",
       "valuation_style": "yield",
       "zone_low": 7.74,
       "zone_high": 9.95,
-      "reason": "PB0.66破净附近 + 股息4.4%，低估"
+      "reason": "PB0.66破净附近 + 股息4.2%，低估"
     },
     {
       "code": "601939",
@@ -67,21 +67,21 @@
       "price": 10.03,
       "pe": 7.676,
       "pb": 0.74,
-      "div_yield": 4.187,
-      "score_total": 51.9,
+      "div_yield": 3.878,
+      "score_total": 51.7,
       "score_dims": {
         "asset_quality": 11.0,
         "liability": 6.7,
         "intermediary": 11.8,
         "capital": 14.2,
-        "management": 8.2
+        "management": 8.0
       },
-      "signal": "BUY",
-      "signal_cn": "买入",
+      "signal": "HOLD",
+      "signal_cn": "持有",
       "valuation_style": "yield",
       "zone_low": 9.49,
       "zone_high": 12.2,
-      "reason": "PB0.74破净附近 + 股息4.2%，低估"
+      "reason": "PB0.74接近净资产，合理偏高，持有"
     },
     {
       "code": "601288",
@@ -91,21 +91,21 @@
       "price": 6.23,
       "pe": 7.409,
       "pb": 0.771,
-      "div_yield": 4.013,
-      "score_total": 59.6,
+      "div_yield": 6.019,
+      "score_total": 61.6,
       "score_dims": {
         "asset_quality": 12.6,
         "liability": 13.4,
         "intermediary": 11.3,
         "capital": 12.1,
-        "management": 10.2
+        "management": 12.2
       },
       "signal": "BUY",
       "signal_cn": "买入",
       "valuation_style": "yield",
       "zone_low": 5.66,
       "zone_high": 7.27,
-      "reason": "PB0.77破净附近 + 股息4.0%，低估"
+      "reason": "PB0.77破净附近 + 股息6.0%，低估"
     },
     {
       "code": "601988",
@@ -115,21 +115,21 @@
       "price": 5.79,
       "pe": 7.606,
       "pb": 0.683,
-      "div_yield": 4.318,
-      "score_total": 48.1,
+      "div_yield": 3.903,
+      "score_total": 48.5,
       "score_dims": {
         "asset_quality": 10.8,
         "liability": 4.1,
         "intermediary": 17.2,
         "capital": 9.7,
-        "management": 6.3
+        "management": 6.7
       },
-      "signal": "BUY",
-      "signal_cn": "买入",
+      "signal": "HOLD",
+      "signal_cn": "持有",
       "valuation_style": "yield",
       "zone_low": 5.93,
       "zone_high": 7.63,
-      "reason": "PB0.68破净附近 + 股息4.3%，低估"
+      "reason": "PB0.68接近净资产，合理偏高，持有"
     },
     {
       "code": "002142",
@@ -139,14 +139,14 @@
       "price": 30.7,
       "pe": 6.736,
       "pb": 0.872,
-      "div_yield": 2.117,
-      "score_total": 59.0,
+      "div_yield": 6.84,
+      "score_total": 63.6,
       "score_dims": {
         "asset_quality": 18.7,
         "liability": 7.1,
         "intermediary": 12.1,
         "capital": 9.1,
-        "management": 12.0
+        "management": 16.6
       },
       "signal": "BUY",
       "signal_cn": "买入",

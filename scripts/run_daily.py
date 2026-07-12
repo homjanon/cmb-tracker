@@ -57,6 +57,20 @@ def main():
             json.dump(merged, f, ensure_ascii=False, indent=2)
         print(f"    已刷新 {len([1 for v in refreshed.values() if v])} 只 BVPS/ROE/EPS、"
               f"{len([1 for v in nii.values() if v])} 只非息占比")
+    # 分红自动刷新（近365天已实施分红求和÷10）
+    div = ff.refresh_div(banks)
+    if div:
+        print(f"    分红自动刷新 {len(div)} 只")
+    for code, v in div.items():
+        if code in merged:
+            merged[code].update(v)
+            eps = merged[code].get("eps")
+            div_ps = v.get("div_ps")
+            if eps and div_ps and eps > 0:
+                merged[code]["div_payout"] = round(div_ps / eps * 100, 1)
+    if div:
+        with open(FUND_JSON, "w", encoding="utf-8") as f:
+            json.dump(merged, f, ensure_ascii=False, indent=2)
 
     # 2) 行情
     bvps_map = {b.code: merged[b.code].get("bvps") for b in banks}
