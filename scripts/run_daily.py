@@ -16,6 +16,7 @@ import fetch_quotes
 import fetch_fundamentals as ff
 from zhaozhao_five_dim import (Fundamentals, score_all, buy_signal, SIGNAL_CN)
 import render_html
+import render_report
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FUND_JSON = os.path.join(ROOT, "fundamentals.json")
@@ -102,6 +103,11 @@ def main():
     os.makedirs(DOCS, exist_ok=True)
     render_html.render(rows, merged, t0, os.path.join(DOCS, "index.html"))
     render_html.render_history(HISTORY, os.path.join(DOCS, "history.html"))
+
+    # 6) JSON 产出（供外部 fetch 调用，对齐 xiaoxu-fear 的 xxfi_report.json）
+    print("\n[6] 生成 output/cmb_report.json ...")
+    out_dir = os.path.join(ROOT, "output")
+    render_report.write(rows, merged, t0, os.path.join(out_dir, "cmb_report.json"))
 
     dt = (datetime.now() - t0).total_seconds()
     print(f"\n✅ 完成 ({dt:.1f}s)")

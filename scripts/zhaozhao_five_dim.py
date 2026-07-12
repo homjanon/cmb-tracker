@@ -163,6 +163,33 @@ def score_all(f: Fundamentals) -> dict:
     }
 
 
+def _buy_zone(f: Fundamentals, valuation_style: str) -> tuple:
+    """
+    计算买入区间（价格上下沿），返回 (zone_low, zone_high)。
+    zone_high = 估值上沿（信号升为 BUY 的边界）：
+      - yield 型：PB=0.9 对应的价格
+      - growth 型：PE=8 对应的价格
+    zone_low  = 强买下沿（STRONG_BUY 边界）：
+      - yield 型：PB=0.7 对应的价格
+      - growth 型：PE=6 对应的价格
+    无价格或估值数据时返回 (None, None)。
+    """
+    price = f.price
+    if price is None:
+        return None, None
+    if valuation_style == "growth":
+        pe = f.pe
+        if not pe or pe <= 0:
+            return None, None
+        eps = price / pe
+        return round(6 * eps, 2), round(8 * eps, 2)
+    pb = f.pb
+    if not pb or pb <= 0:
+        return None, None
+    bvps = price / pb
+    return round(0.7 * bvps, 2), round(0.9 * bvps, 2)
+
+
 def buy_signal(f: Fundamentals, valuation_style: str = "yield") -> dict:
     """
     买入信号 + 动态买入区间。
@@ -201,7 +228,8 @@ def buy_signal(f: Fundamentals, valuation_style: str = "yield") -> dict:
         if total >= 100 and sig == "HOLD":
             sig = "BUY"
             reason += "；五维总分极高，上调至买入"
-        return {"signal": sig, "zone_low": None, "zone_high": None,
+        zl, zh = _buy_zone(f, "growth")
+        return {"signal": sig, "zone_low": zl, "zone_high": zh,
                 "reason": reason, "valuation_style": "growth"}
 
     # —— 收益型估值：PB 破净 + 股息率 ——
@@ -228,7 +256,8 @@ def buy_signal(f: Fundamentals, valuation_style: str = "yield") -> dict:
     if total >= 105 and sig in ("HOLD",):
         sig = "BUY"
         reason += "；五维总分极高，上调至买入"
-    return {"signal": sig, "zone_low": None, "zone_high": None,
+    zl, zh = _buy_zone(f, "yield")
+    return {"signal": sig, "zone_low": zl, "zone_high": zh,
             "reason": reason, "valuation_style": "yield"}
 
 
