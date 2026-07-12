@@ -72,6 +72,36 @@ def render(rows, fund, t0, out_path):
     radar_json = json.dumps(radar, ensure_ascii=False)
     colors = [r["color"] for r in rows]
     shorts = [r["short"] for r in rows]
+    # 构建 Chart.js 配置对象（Python dict → json.dumps，避免 f-string {{}} 转义 bug）
+    radar_datasets = []
+    for i, s in enumerate(shorts):
+        radar_datasets.append({
+            "label": s,
+            "data": radar[s],
+            "borderColor": colors[i],
+            "backgroundColor": colors[i] + "22",
+            "pointBackgroundColor": colors[i]
+        })
+    radar_cfg_json = json.dumps({
+        "type": "radar",
+        "data": {"labels": DIM_NAMES, "datasets": radar_datasets},
+        "options": {
+            "scales": {"r": {"min": 0, "max": 20, "ticks": {"stepSize": 5}}},
+            "plugins": {"legend": {"position": "bottom"}}
+        }
+    }, ensure_ascii=False)
+    totals_list = [sum(radar[s]) for s in shorts]
+    bar_cfg_json = json.dumps({
+        "type": "bar",
+        "data": {
+            "labels": shorts,
+            "datasets": [{"label": "总分", "data": totals_list, "backgroundColor": colors}]
+        },
+        "options": {
+            "plugins": {"legend": {"display": False}},
+            "scales": {"y": {"beginAtZero": True, "max": 100}}
+        }
+    }, ensure_ascii=False)
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head>
@@ -134,19 +164,8 @@ def render(rows, fund, t0, out_path):
 </div>
 </div>
 <script>
-const SHORTS={json.dumps(shorts,ensure_ascii=False)};
-const RADAR={radar_json};
-const COLORS={json.dumps(colors,ensure_ascii=False)};
-const DIM_NAMES={json.dumps(DIM_NAMES,ensure_ascii=False)};
-new Chart(document.getElementById('radar'),{{type:'radar',data:{{
-  labels:DIM_NAMES,
-  datasets:SHORTS.map((s,i)=>({{label:s,data:RADAR[s],
-    borderColor:COLORS[i],backgroundColor:COLORS[i]+'22',pointBackgroundColor:COLORS[i]}}))
-}},options:{{scales:{{r:{{min:0,max:20,ticks:{{stepSize:5}}}}}},plugins:{{legend:{{position:'bottom'}}}}}}}}}});
-const totals=SHORTS.map(s=>RADAR[s].reduce((a,b)=>a+b,0));
-new Chart(document.getElementById('bar'),{{type:'bar',data:{{labels:SHORTS,
-  datasets:[{{label:'总分',data:totals,backgroundColor:COLORS}}]}},
-  options:{{plugins:{{legend:{{display:false}}}},scales:{{y:{{beginAtZero:true,max:100}}}}}}}}}});
+new Chart(document.getElementById('radar'), {radar_cfg_json});
+new Chart(document.getElementById('bar'), {bar_cfg_json});
 </script></body></html>"""
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
@@ -177,6 +196,23 @@ def render_history(history_path, out_path):
     pb_ds = [{"label": names[c], "data": [series[c].get(d, {}).get("pb") for d in dates],
               "borderColor": palette[i % len(palette)], "tension": .3, "pointRadius": 2}
              for i, c in enumerate(codes)]
+    # Chart.js 配置（json.dumps，避免 f-string 转义 bug）
+    line_t_cfg_json = json.dumps({
+        "type": "line",
+        "data": {"labels": dates, "datasets": total_ds},
+        "options": {
+            "plugins": {"legend": {"position": "bottom"}},
+            "scales": {"y": {"beginAtZero": False}}
+        }
+    }, ensure_ascii=False)
+    line_p_cfg_json = json.dumps({
+        "type": "line",
+        "data": {"labels": dates, "datasets": pb_ds},
+        "options": {
+            "plugins": {"legend": {"position": "bottom"}},
+            "scales": {"y": {"beginAtZero": False}}
+        }
+    }, ensure_ascii=False)
     html = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>历史趋势</title>
 <script src="vendor/chart.umd.min.js"></script>
@@ -189,11 +225,8 @@ a{{color:#3a4a5e}}</style></head><body><div class="wrap">
 <div class="panel"><h3>PB（市净率）历史趋势</h3><canvas id="p" height="320"></canvas></div>
 </div>
 <script>
-const DATES={json.dumps(dates,ensure_ascii=False)};
-new Chart(document.getElementById('t'),{{type:'line',data:{{labels:DATES,datasets:{json.dumps(total_ds,ensure_ascii=False)}}},
- options:{{plugins:{{legend:{{position:'bottom'}}}},scales:{{y:{{beginAtZero:false}}}}}}}}}});
-new Chart(document.getElementById('p'),{{type:'line',data:{{labels:DATES,datasets:{json.dumps(pb_ds,ensure_ascii=False)}}},
- options:{{plugins:{{legend:{{position:'bottom'}}}},scales:{{y:{{beginAtZero:false}}}}}}}}}});
+new Chart(document.getElementById('t'), {line_t_cfg_json});
+new Chart(document.getElementById('p'), {line_p_cfg_json});
 </script></body></html>"""
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
