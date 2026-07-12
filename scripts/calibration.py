@@ -7,7 +7,7 @@
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bank_universe import all_banks
-from guzidi_five_dim import Fundamentals, score_all
+from zhaozhao_five_dim import Fundamentals, score_all
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 with open(os.path.join(ROOT, "fundamentals.json"), encoding="utf-8") as f:
