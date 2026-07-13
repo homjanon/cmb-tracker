@@ -10,7 +10,7 @@
       "rorwa",
       "retail_focus"
     ],
-    "npl": 1.37,
+    "npl": 0.94,
     "provision_coverage": 437.0,
     "current_deposit_ratio": 52.0,
     "retail_deposit_ratio": 58.0,
@@ -28,7 +28,10 @@
     "nii_as_of": "20260331",
     "div_as_of": "20260713",
     "net_interest_margin": 1.83,
-    "net_interest_spread": 1.77
+    "net_interest_spread": 1.77,
+    "capital_adequacy": 17.76,
+    "tier1_adequacy": 16.05,
+    "provision_ratio": 3.63
   },
   "601398": {
     "as_of": "2026Q1",
@@ -41,7 +44,7 @@
       "rorwa",
       "retail_focus"
     ],
-    "npl": 1.38,
+    "npl": 1.31,
     "provision_coverage": 213.0,
     "current_deposit_ratio": 48.0,
     "retail_deposit_ratio": 32.0,
@@ -58,7 +61,9 @@
     "name": "工商银行",
     "nii_as_of": "20260331",
     "div_as_of": "20260713",
-    "net_interest_margin": 1.29
+    "net_interest_margin": 1.29,
+    "capital_adequacy": 18.21,
+    "tier1_adequacy": 14.56
   },
   "601939": {
     "as_of": "2026Q1",
@@ -71,7 +76,7 @@
       "rorwa",
       "retail_focus"
     ],
-    "npl": 1.36,
+    "npl": 1.31,
     "provision_coverage": 240.0,
     "current_deposit_ratio": 45.0,
     "retail_deposit_ratio": 28.0,
@@ -88,7 +93,10 @@
     "name": "建设银行",
     "nii_as_of": "20260331",
     "div_as_of": "20260713",
-    "net_interest_margin": 1.36
+    "net_interest_margin": 1.36,
+    "capital_adequacy": 19.0,
+    "tier1_adequacy": 15.06,
+    "provision_ratio": 3.06
   },
   "601288": {
     "as_of": "2026Q1",
@@ -101,7 +109,7 @@
       "rorwa",
       "retail_focus"
     ],
-    "npl": 1.35,
+    "npl": 1.25,
     "provision_coverage": 305.0,
     "current_deposit_ratio": 55.0,
     "retail_deposit_ratio": 42.0,
@@ -118,7 +126,9 @@
     "name": "农业银行",
     "nii_as_of": "20260331",
     "div_as_of": "20260713",
-    "net_interest_margin": 1.26
+    "net_interest_margin": 1.26,
+    "capital_adequacy": 17.4,
+    "tier1_adequacy": 12.61
   },
   "601988": {
     "as_of": "2026Q1",
@@ -131,7 +141,7 @@
       "rorwa",
       "retail_focus"
     ],
-    "npl": 1.27,
+    "npl": 1.22,
     "provision_coverage": 215.0,
     "current_deposit_ratio": 40.0,
     "retail_deposit_ratio": 20.0,
@@ -148,7 +158,9 @@
     "name": "中国银行",
     "nii_as_of": "20260331",
     "div_as_of": "20260713",
-    "net_interest_margin": 1.26
+    "net_interest_margin": 1.26,
+    "capital_adequacy": 18.23,
+    "tier1_adequacy": 13.92
   },
   "002142": {
     "as_of": "2026Q1",
@@ -179,6 +191,8 @@
     "nii_as_of": "20260331",
     "div_as_of": "20260713",
     "net_interest_margin": 1.73,
-    "net_interest_spread": 1.73
+    "net_interest_spread": 1.73,
+    "tier1_adequacy": 10.26,
+    "provision_ratio": 2.8
   }
 }
