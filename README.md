@@ -63,7 +63,7 @@ python run_daily.py
 
 ## GitHub Actions 自动运行
 
-- 触发：`cron "0 12 * * 1-5"`（**UTC 12:00 = 北京时间 20:00**）+ 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。推后至盘后约 4.5h，给 baostock/东财留出盘后数据定稿时间，降低 PE/PB 取到上一交易日的概率。
+- 触发：`cron "30 7 * * 1-5"`（**UTC 07:30 = 北京时间 15:30**）+ 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。GitHub Actions 约 1h 排队延迟，实跑约 **北京时间 16:30 后**；用于验证 16:30 盘后能否取得当日定稿数据。
 - 流程：checkout → 装依赖 → 交易日判断 → `run_daily.py`（设 `BIYING_API_KEY`）→ 自动 commit `fundamentals.json`/`history.jsonl`/`docs/`/`output/`
 - Pages：仓库 Settings → Pages → Source 选 `main` 分支 `/docs` 目录
 
@@ -121,7 +121,7 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 
 ```
 cmb-tracker/
-├── .github/workflows/daily.yml   # 每日自动化（交易日 20:00 北京时间）
+├── .github/workflows/daily.yml   # 每日自动化（交易日 15:30 触发 · 实跑约 16:30 北京时间）
 ├── _api_sync.py                  # GitHub Contents API 推送（替代被墙的 git push）
 ├── scripts/
 │   ├── bank_universe.py          # 标的清单
