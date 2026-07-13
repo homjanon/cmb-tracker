@@ -57,10 +57,10 @@ def render(rows, fund, t0, out_path):
         trs.append(f"""
         <tr>
           <td><b>{r['name']}</b><br><span class="code">{r['code']}</span></td>
-          <td class="num">{r['price'] if r['price'] else '—'}</td>
+          <td class="num" title="价数据源：{r.get('price_source','')}｜抓取：{r.get('quote_time','')}">{r['price'] if r['price'] else '—'}</td>
           <td class="num">{zone_cell}</td>
-          <td class="num">{r['pe'] if r['pe'] else '—'}</td>
-          <td class="num">{r['pb'] if r['pb'] else '—'}</td>
+          <td class="num" title="PE 数据源：{r.get('pe_source','')}">{r['pe'] if r['pe'] else '—'}</td>
+          <td class="num" title="PB 数据源：{r.get('pb_source','')}">{r['pb'] if r['pb'] else '—'}</td>
           <td class="num">{r['div_yield'] if r['div_yield'] else '—'}</td>
           <td class="dims">{dims}</td>
           <td class="num"><b style="color:{total_color};font-size:1.1em">{total:.0f}</b><span class="sub">/100</span></td>

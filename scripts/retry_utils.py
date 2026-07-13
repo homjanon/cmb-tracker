@@ -41,7 +41,9 @@ def fallback_chain(*fetchers):
     for f in fetchers:
         try:
             r = f()
-            if r is not None:
+            # 非空（非 None / 非空 dict / 非空 list）才算成功；
+            # 空字典会被当作失败继续尝试，避免腾讯返回 {} 时跳过新浪/akshare 直接掉 baostock。
+            if r:
                 return r
         except Exception as e:
             errors.append(f"{getattr(f, '__name__', repr(f))}: {e}")

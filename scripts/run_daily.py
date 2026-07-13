@@ -41,22 +41,24 @@ def main():
     print("\n[1] 财务底表（fundamentals.json）...")
     refreshed = ff.refresh_light(banks, fund_cache)   # BVPS/ROE/EPS（动态报告期）
     nii = ff.refresh_nii(banks)                       # 非息占比（半自动，必盈）
+    deep = ff.refresh_deep(banks)                     # 东财 F10 指标（净息差等，自动）
     merged = {}
     for b in banks:
         base = fund_cache.get(b.code, {})
         rec = dict(base)
-        for src in (refreshed.get(b.code, {}), nii.get(b.code, {})):
+        for src in (refreshed.get(b.code, {}), nii.get(b.code, {}), deep.get(b.code, {})):
             rec.update({k: v for k, v in src.items() if v is not None})
         rec["code"] = b.code
         rec["name"] = b.name
         rec.setdefault("as_of", base.get("as_of", "未知"))
         merged[b.code] = rec
-    # 写回（仅当有新数据；质量字段因不在 refreshed/nii 中，原样保留）
-    if any(refreshed.values()) or any(nii.values()):
+    # 写回（仅当有新数据；质量字段因不在 refreshed/nii/deep 中，原样保留）
+    if any(refreshed.values()) or any(nii.values()) or any(deep.values()):
         with open(FUND_JSON, "w", encoding="utf-8") as f:
             json.dump(merged, f, ensure_ascii=False, indent=2)
         print(f"    已刷新 {len([1 for v in refreshed.values() if v])} 只 BVPS/ROE/EPS、"
-              f"{len([1 for v in nii.values() if v])} 只非息占比")
+              f"{len([1 for v in nii.values() if v])} 只非息占比、"
+              f"{len([1 for v in deep.values() if v])} 只东财指标（净息差等）")
     # 分红自动刷新（近365天已实施分红求和÷10）
     div = ff.refresh_div(banks)
     if div:
@@ -106,6 +108,8 @@ def main():
             "code": b.code, "name": b.name, "short": b.short, "color": b.color,
             "price": q.get("price"), "pe": q.get("pe"), "pb": q.get("pb"),
             "div_yield": q.get("div_yield"),
+            "price_source": q.get("price_source"), "pe_source": q.get("pe_source"),
+            "pb_source": q.get("pb_source"), "quote_time": q.get("quote_time"),
             "score": sc, "signal": sig,
         })
 

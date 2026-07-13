@@ -175,7 +175,38 @@ def refresh_div(banks) -> dict:
     return out
 
 
-def refresh_deep(banks, cache: dict) -> dict:
-    """深度刷新（季度/手动，休眠不用）：质量字段仍以 fundamentals.json 真源手工维护。
-    必盈非息占比已独立由 refresh_nii 提供；不良率/拨备/资本充足率无免费机器接口，维持手工。"""
-    return {}
+def refresh_deep(banks) -> dict:
+    """自动：东财 F10 财务指标（净息差 NIM 等银行专属指标）。
+    返回 {code: {net_interest_margin, net_interest_spread}}。
+
+    注：不良率 / 拨备覆盖率 / 核心一级资本充足率 EM 不直接提供可靠比率，故仍保持手工维护：
+      · NON_PERFORMING_LOAN 为不良额(元)，÷贷款算出的不良率(≈0.94%)与招行披露口径(≈1.37%)不符；
+      · LOAN_PROVISION_RATIO 实为拨贷比(≈3.63%)，非拨备覆盖率(≈437%)；
+      · RISK_COVERAGE / 核心一级资本充足率 在 EM 中为空（None）。
+    因此本函数只自动化净息差这类「直接可得」的指标，质量字段继续走 _manual_maintain 手工。"""
+    out = {}
+    try:
+        import akshare as ak
+        for b in banks:
+            if b.is_hk:
+                continue
+            suffix = "SH" if b.akshare.startswith("SH") else "SZ"
+            df = ak.stock_financial_analysis_indicator_em(symbol=f"{b.code}.{suffix}", indicator="按报告期")
+            if df is None or getattr(df, "empty", True):
+                continue
+            d = df.copy()
+            d["RD"] = d["REPORT_DATE"].astype(str)
+            d = d.sort_values("RD", ascending=False)
+            row = d.iloc[0]
+            rec = {}
+            nim = _f(row.get("NET_INTEREST_MARGIN"))
+            if nim is not None and nim == nim:   # 排除 NaN（NaN != NaN）
+                rec["net_interest_margin"] = round(nim, 2)
+            sp = _f(row.get("NET_INTEREST_SPREAD"))
+            if sp is not None and sp == sp:
+                rec["net_interest_spread"] = round(sp, 2)
+            if rec:
+                out[b.code] = rec
+    except Exception as e:
+        print(f"    [refresh_deep] 东财指标失败，保持原值：{e}")
+    return out

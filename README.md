@@ -35,13 +35,13 @@
 
 银行的五维财务字段中，质量字段（不良率/拨备/资本充足率/存款结构/RORWA）是**季度**数据、每日不变；而现价/PE/PB/股息率与部分财务字段是**每日**变化。因此采用「底表为真源 + 每日轻量刷新」的稳健设计：
 
-- **行情（每日）**：腾讯 `qt.gtimg.cn`（主）→ 新浪 `hq.sinajs.cn`（备）→ akshare `stock_zh_a_spot_em`（兜底）。这一多源容错链复用自「每日财经早报」项目。
+- **行情（每日）**：腾讯 `qt.gtimg.cn`（主）→ 新浪 `hq.sinajs.cn`（备）→ akshare `stock_zh_a_spot_em`（兜底）。**价格与 PE/PB 均取自腾讯实时**：`parts[3]`=现价、`parts[39]`=市盈率(TTM)、`parts[46]`=市净率(PB)；腾讯缺失时 PE/PB 退 baostock `peTTM/pbMRQ`，再退 现价÷BVPS。这一多源容错链复用自「每日财经早报」项目。
 - **财务底表（真源）**：`fundamentals.json` 保存各银行五维原始输入与每日刷新结果。
   - `scripts/fetch_fundamentals.py → refresh_light()`：**每日**用 akshare `stock_yjbb_em` 刷新每股净资产(BVPS)/ROE/**EPS（均按报告期年化）**，保证 PB 与派息率口径精确。
   - `refresh_nii()`：非息收入占比 —— **半自动**，每日用必盈利润表 API 推算，需 `BIYING_API_KEY` 环境变量；缺 key/失败则保留手工值。
   - `refresh_div()`：每股分红 `div_ps` —— **自动**，每日用 akshare `stock_history_dividend_detail` 按股权登记日倒序取最新 2 次「已实施」派息（元/10 股）求和÷10，等于最近一个完整年度（本组合均为半年派，规避滚动 365 天窗口跨年抓到 3 次导致股息率/派息率虚高）。
   - 派息率 `div_payout`：**自动**，由 `div_ps ÷ 年化EPS` 计算（不再手工维护）。
-  - `refresh_deep()`：保留接口（当前休眠），质量字段仍按季度手工维护于底表。
+  - `refresh_deep()`：**已启用**，每日用 akshare `stock_financial_analysis_indicator_em` 自动刷新银行专属指标（净息差 NIM / 净息差价差 spread，按报告期取最新一期），结果写回底表 `net_interest_margin`/`net_interest_spread`。注：不良率/拨备/资本充足率 EM 不可靠，仍按季度手工维护。
 - **为什么不全自动**：akshare 1.18.x 的 `stock_financial_analysis_indicator` 已失效，利润表/资产负债表原始科目列名漂移，港股接口在沙箱不稳定。质量字段（不良率/拨备/核心一级资本充足率/存款结构/RORWA/零售护城河）目前人工季度更新；BVPS/ROE/EPS/div_ps/非息占比已实现自动或半自动刷新。
 
 ## 每日运行
@@ -63,7 +63,7 @@ python run_daily.py
 
 ## GitHub Actions 自动运行
 
-- 触发：`cron "30 7 * * 1-5"`（**UTC 07:30 = 北京时间 15:30**）+ 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。GitHub Actions 实际存在约 1h 延迟，实跑时间约 **北京时间 16:30**，恰好盘后数据定稿窗口。
+- 触发：`cron "0 12 * * 1-5"`（**UTC 12:00 = 北京时间 20:00**）+ 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。推后至盘后约 4.5h，给 baostock/东财留出盘后数据定稿时间，降低 PE/PB 取到上一交易日的概率。
 - 流程：checkout → 装依赖 → 交易日判断 → `run_daily.py`（设 `BIYING_API_KEY`）→ 自动 commit `fundamentals.json`/`history.jsonl`/`docs/`/`output/`
 - Pages：仓库 Settings → Pages → Source 选 `main` 分支 `/docs` 目录
 
@@ -101,7 +101,7 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 }
 ```
 
-字段说明：`score_dims` 为五维得分（0–20 各维）；`zone_low`/`zone_high` 为模型给出的买入区间上下限；`signal`/`signal_cn` 为买入信号（STRONG_BUY/BUY/HOLD/REDUCE）及中文。
+字段说明：`score_dims` 为五维得分（0–20 各维）；`zone_low`/`zone_high` 为模型给出的买入区间上下限；`signal`/`signal_cn` 为买入信号（STRONG_BUY/BUY/HOLD/REDUCE）及中文；`price_source`/`pe_source`/`pb_source` 标注取值来源（`tencent`=实时 / `baostock`=上一交易日兜底 / `bvps`=现价÷BVPS 推算 / `sina/akshare`=备源），`quote_time` 为行情抓取时间（ISO8601 含时区），用于识别数据是否陈旧。
 
 ## 维护财务报表
 
@@ -121,7 +121,7 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 
 ```
 cmb-tracker/
-├── .github/workflows/daily.yml   # 每日自动化（交易日 16:30 前后）
+├── .github/workflows/daily.yml   # 每日自动化（交易日 20:00 北京时间）
 ├── _api_sync.py                  # GitHub Contents API 推送（替代被墙的 git push）
 ├── scripts/
 │   ├── bank_universe.py          # 标的清单
