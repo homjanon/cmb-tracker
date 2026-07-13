@@ -1,7 +1,7 @@
 {
   "tracker": "cmb-tracker",
   "model": "招招五维模型",
-  "generated_at": "2026-07-13T15:37:15.154306+08:00",
+  "generated_at": "2026-07-13T18:41:27.794895+08:00",
   "data_date": "2026-07-13",
   "summary": {
     "total_banks": 6,
@@ -23,7 +23,7 @@
       "price_source": "tencent",
       "pe_source": "tencent",
       "pb_source": "tencent",
-      "quote_time": "2026-07-13T15:37:15.152378+08:00",
+      "quote_time": "2026-07-13T18:41:27.792760+08:00",
       "net_interest_margin": 1.83,
       "score_total": 85.0,
       "score_dims": {
@@ -52,7 +52,7 @@
       "price_source": "tencent",
       "pe_source": "tencent",
       "pb_source": "tencent",
-      "quote_time": "2026-07-13T15:37:15.152378+08:00",
+      "quote_time": "2026-07-13T18:41:27.792760+08:00",
       "net_interest_margin": 1.29,
       "score_total": 52.9,
       "score_dims": {
@@ -81,7 +81,7 @@
       "price_source": "tencent",
       "pe_source": "tencent",
       "pb_source": "tencent",
-      "quote_time": "2026-07-13T15:37:15.152378+08:00",
+      "quote_time": "2026-07-13T18:41:27.792760+08:00",
       "net_interest_margin": 1.36,
       "score_total": 52.2,
       "score_dims": {
@@ -110,7 +110,7 @@
       "price_source": "tencent",
       "pe_source": "tencent",
       "pb_source": "tencent",
-      "quote_time": "2026-07-13T15:37:15.152378+08:00",
+      "quote_time": "2026-07-13T18:41:27.792760+08:00",
       "net_interest_margin": 1.26,
       "score_total": 61.0,
       "score_dims": {
@@ -139,7 +139,7 @@
       "price_source": "tencent",
       "pe_source": "tencent",
       "pb_source": "tencent",
-      "quote_time": "2026-07-13T15:37:15.152378+08:00",
+      "quote_time": "2026-07-13T18:41:27.792760+08:00",
       "net_interest_margin": 1.26,
       "score_total": 49.0,
       "score_dims": {
@@ -168,7 +168,7 @@
       "price_source": "tencent",
       "pe_source": "tencent",
       "pb_source": "tencent",
-      "quote_time": "2026-07-13T15:37:15.152378+08:00",
+      "quote_time": "2026-07-13T18:41:27.792760+08:00",
       "net_interest_margin": 1.73,
       "score_total": 59.4,
       "score_dims": {
