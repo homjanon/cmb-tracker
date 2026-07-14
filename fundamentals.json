@@ -14,7 +14,7 @@
     "provision_coverage": 437.0,
     "current_deposit_ratio": 52.0,
     "retail_deposit_ratio": 58.0,
-    "non_interest_ratio": 36.0,
+    "non_interest_ratio": 28.5,
     "rorwa": 2.4,
     "core_tier1": 10.68,
     "roe": 13.48,
@@ -31,7 +31,11 @@
     "net_interest_spread": 1.77,
     "capital_adequacy": 17.76,
     "tier1_adequacy": 16.05,
-    "provision_ratio": 3.63
+    "provision_ratio": 3.63,
+    "research_rating": "买入",
+    "research_count_1m": 0,
+    "research_institution": "东海证券",
+    "research_as_of": "2026-05-05"
   },
   "601398": {
     "as_of": "2026Q1",
@@ -48,7 +52,7 @@
     "provision_coverage": 213.0,
     "current_deposit_ratio": 48.0,
     "retail_deposit_ratio": 32.0,
-    "non_interest_ratio": 26.8,
+    "non_interest_ratio": 21.2,
     "rorwa": 1.45,
     "core_tier1": 13.55,
     "roe": 8.83,
@@ -63,7 +67,11 @@
     "div_as_of": "20260714",
     "net_interest_margin": 1.29,
     "capital_adequacy": 18.21,
-    "tier1_adequacy": 14.56
+    "tier1_adequacy": 14.56,
+    "research_rating": "买入",
+    "research_count_1m": 0,
+    "research_institution": "太平洋",
+    "research_as_of": "2026-04-23"
   },
   "601939": {
     "as_of": "2026Q1",
@@ -80,7 +88,7 @@
     "provision_coverage": 240.0,
     "current_deposit_ratio": 45.0,
     "retail_deposit_ratio": 28.0,
-    "non_interest_ratio": 27.4,
+    "non_interest_ratio": 21.1,
     "rorwa": 1.42,
     "core_tier1": 13.87,
     "roe": 9.85,
@@ -96,7 +104,11 @@
     "net_interest_margin": 1.36,
     "capital_adequacy": 19.0,
     "tier1_adequacy": 15.06,
-    "provision_ratio": 3.06
+    "provision_ratio": 3.06,
+    "research_rating": "增持",
+    "research_count_1m": 0,
+    "research_institution": "国信证券",
+    "research_as_of": "2026-03-31"
   },
   "601288": {
     "as_of": "2026Q1",
@@ -113,7 +125,7 @@
     "provision_coverage": 305.0,
     "current_deposit_ratio": 55.0,
     "retail_deposit_ratio": 42.0,
-    "non_interest_ratio": 26.7,
+    "non_interest_ratio": 24.0,
     "rorwa": 1.38,
     "core_tier1": 11.28,
     "roe": 10.59,
@@ -128,7 +140,11 @@
     "div_as_of": "20260714",
     "net_interest_margin": 1.26,
     "capital_adequacy": 17.4,
-    "tier1_adequacy": 12.61
+    "tier1_adequacy": 12.61,
+    "research_rating": "增持",
+    "research_count_1m": 0,
+    "research_institution": "太平洋",
+    "research_as_of": "2026-04-29"
   },
   "601988": {
     "as_of": "2026Q1",
@@ -145,7 +161,7 @@
     "provision_coverage": 215.0,
     "current_deposit_ratio": 40.0,
     "retail_deposit_ratio": 20.0,
-    "non_interest_ratio": 35.1,
+    "non_interest_ratio": 24.8,
     "rorwa": 1.28,
     "core_tier1": 10.43,
     "roe": 8.46,
@@ -160,7 +176,11 @@
     "div_as_of": "20260714",
     "net_interest_margin": 1.26,
     "capital_adequacy": 18.23,
-    "tier1_adequacy": 13.92
+    "tier1_adequacy": 13.92,
+    "research_rating": "中性",
+    "research_count_1m": 0,
+    "research_institution": "国信证券",
+    "research_as_of": "2026-03-31"
   },
   "002142": {
     "as_of": "2026Q1",
@@ -177,7 +197,7 @@
     "provision_coverage": 400.0,
     "current_deposit_ratio": 45.0,
     "retail_deposit_ratio": 30.0,
-    "non_interest_ratio": 27.8,
+    "non_interest_ratio": 25.7,
     "rorwa": 1.35,
     "core_tier1": 9.8,
     "roe": 14.38,
@@ -193,6 +213,10 @@
     "net_interest_margin": 1.73,
     "net_interest_spread": 1.73,
     "tier1_adequacy": 10.26,
-    "provision_ratio": 2.8
+    "provision_ratio": 2.8,
+    "research_rating": "买入",
+    "research_count_1m": 0,
+    "research_institution": "东海证券",
+    "research_as_of": "2026-04-30"
   }
 }
