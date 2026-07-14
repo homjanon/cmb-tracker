@@ -35,7 +35,13 @@
     "research_rating": "买入",
     "research_count_1m": 0,
     "research_institution": "东海证券",
-    "research_as_of": "2026-05-05"
+    "research_as_of": "2026-05-05",
+    "research_target_price": 49.88,
+    "research_target_low": 49.88,
+    "research_target_high": 49.88,
+    "research_target_rating": "买入",
+    "research_target_institution": "华泰证券",
+    "research_target_as_of": "2026-06-17"
   },
   "601398": {
     "as_of": "2026Q1",
@@ -71,7 +77,10 @@
     "research_rating": "买入",
     "research_count_1m": 0,
     "research_institution": "太平洋",
-    "research_as_of": "2026-04-23"
+    "research_as_of": "2026-04-23",
+    "research_target_rating": "买入",
+    "research_target_institution": "长江证券",
+    "research_target_as_of": "2026-06-10"
   },
   "601939": {
     "as_of": "2026Q1",
