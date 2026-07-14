@@ -42,11 +42,13 @@ def main():
     refreshed = ff.refresh_light(banks, fund_cache)   # BVPS/ROE/EPS（动态报告期）
     nii = ff.refresh_nii(banks)                       # 非息占比（半自动，必盈）
     deep = ff.refresh_deep(banks)                     # 东财 F10 指标（净息差 + 不良率/资本充足率/一级资本充足率/拨贷比，自动）
+    research = ff.refresh_research(banks)             # 分析师研报评级（东财，事件字段，不进评分）
     merged = {}
     for b in banks:
         base = fund_cache.get(b.code, {})
         rec = dict(base)
-        for src in (refreshed.get(b.code, {}), nii.get(b.code, {}), deep.get(b.code, {})):
+        for src in (refreshed.get(b.code, {}), nii.get(b.code, {}), deep.get(b.code, {}),
+                    research.get(b.code, {})):
             rec.update({k: v for k, v in src.items() if v is not None})
         rec["code"] = b.code
         rec["name"] = b.name
@@ -54,12 +56,17 @@ def main():
         merged[b.code] = rec
         # 写回：deep 现含 4 个质量字段（npl/capital_adequacy/tier1_adequacy/provision_ratio），
         # 自动覆盖底表对应值；provision_coverage/core_tier1/存款结构/RORWA/零售护城河 不在 deep 中，原样保留。
-        if any(refreshed.values()) or any(nii.values()) or any(deep.values()):
+        # research 为事件型展示字段，一并写回（不入评分）。
+        # 注：北向个股持股（stock_hsgt_individual_em）数据止于 2024-08-16，2024-08-19 起沪深港通
+        # 暂停北向披露，免费源已无当前北向数据 → 本阶段不接入。
+        if any(refreshed.values()) or any(nii.values()) or any(deep.values()) \
+           or any(research.values()):
             with open(FUND_JSON, "w", encoding="utf-8") as f:
                 json.dump(merged, f, ensure_ascii=False, indent=2)
             print(f"    已刷新 {len([1 for v in refreshed.values() if v])} 只 BVPS/ROE/EPS、"
                   f"{len([1 for v in nii.values() if v])} 只非息占比、"
-                  f"{len([1 for v in deep.values() if v])} 只东财指标（净息差+4质量字段）")
+                  f"{len([1 for v in deep.values() if v])} 只东财指标、"
+                  f"{len([1 for v in research.values() if v])} 只研报评级")
     # 分红自动刷新（近365天已实施分红求和÷10）
     div = ff.refresh_div(banks)
     if div:

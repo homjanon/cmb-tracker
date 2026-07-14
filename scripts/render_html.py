@@ -103,6 +103,24 @@ def render(rows, fund, t0, out_path):
         }
     }, ensure_ascii=False)
 
+    # 分析师研报评级 展示面板（事件型字段，不计入五维评分）
+    # 注：北向个股持股数据止于 2024-08-16（2024-08-19 起沪深港通暂停北向披露），本阶段不接入。
+    trs_research = []
+    for r in rows:
+        f = fund.get(r["code"], {})
+        rating = f.get("research_rating")
+        cnt = f.get("research_count_1m")
+        inst = f.get("research_institution")
+        ra = f.get("research_as_of")
+        trs_research.append(f"""
+        <tr>
+          <td><b>{r['name']}</b></td>
+          <td>{rating if rating else '—'}</td>
+          <td>{inst if inst else '—'}</td>
+          <td class="num">{cnt if cnt is not None else '—'}</td>
+          <td class="code">{ra or '—'}</td>
+        </tr>""")
+
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -153,6 +171,12 @@ def render(rows, fund, t0, out_path):
   <div class="panel"><h3>五维雷达对比</h3><canvas id="radar" height="300"></canvas></div>
   <div class="panel"><h3>各维得分</h3><canvas id="bar" height="300"></canvas></div>
 </div>
+
+<div class="panel" style="margin-top:16px"><h3>分析师研报评级（事件更新 · 不计入五维评分）</h3>
+<table>
+<tr><th>银行</th><th>东财评级</th><th>最新机构</th><th class="num">近一月研报</th><th>数据日期</th></tr>
+{''.join(trs_research)}
+</table></div>
 
 <div class="note">
 <b>方法论</b>：评分采用招招五维模型（资产质量/负债结构/中间业务/资本实力/管理层，每维0-20，总分0-100）。

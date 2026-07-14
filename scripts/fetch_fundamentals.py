@@ -225,3 +225,43 @@ def refresh_deep(banks) -> dict:
     except Exception as e:
         print(f"    [refresh_deep] 东财指标失败，保持原值：{e}")
     return out
+
+
+def refresh_research(banks) -> dict:
+    """自动：分析师研报评级（东财）。
+    来源 stock_research_report_em（东财 / HTTP/1.1 直连，A类）。
+    返回 {code: {research_rating, research_count_1m, research_institution, research_as_of}}。
+    说明：事件型更新（新研报发布才变），仅作展示，不进入招招五维评分。
+    取按「日期」倒序的最新一条研报的东财评级 + 近一月研报数。"""
+    out = {}
+    try:
+        import akshare as ak
+        for b in banks:
+            if b.is_hk:
+                continue
+            df = ak.stock_research_report_em(symbol=b.code)
+            if df is None or getattr(df, "empty", True):
+                continue
+            if "日期" not in df.columns:
+                continue
+            d = df.copy().sort_values("日期", ascending=False)
+            row = d.iloc[0]
+            rec = {}
+            rating = row.get("东财评级")
+            if rating is not None and str(rating).strip():
+                rec["research_rating"] = str(rating).strip()
+            cnt = _f(row.get("近一月个股研报数"))
+            if cnt is not None:
+                rec["research_count_1m"] = int(cnt)
+            inst = row.get("机构")
+            if inst is not None and str(inst).strip():
+                rec["research_institution"] = str(inst).strip()
+            dt = row.get("日期")
+            rec["research_as_of"] = str(dt)[:10] if dt is not None else None
+            if rec:
+                out[b.code] = rec
+                print(f"    [refresh_research] {b.code} 评级 {rec.get('research_rating')} | "
+                      f"近一月研报 {rec.get('research_count_1m')} | as_of {rec.get('research_as_of')}")
+    except Exception as e:
+        print(f"    [refresh_research] 研报评级失败，跳过：{e}")
+    return out
