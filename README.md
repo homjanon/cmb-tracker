@@ -38,7 +38,7 @@
 - **行情（每日）**：腾讯 `qt.gtimg.cn`（主）→ 新浪 `hq.sinajs.cn`（备）→ akshare `stock_zh_a_spot_em`（兜底）。**价格与 PE/PB 均取自腾讯实时**：`parts[3]`=现价、`parts[39]`=市盈率(TTM)、`parts[46]`=市净率(PB)；腾讯缺失时 PE/PB 退 baostock `peTTM/pbMRQ`，再退 现价÷BVPS。这一多源容错链复用自「每日财经早报」项目。
 - **财务底表（真源）**：`fundamentals.json` 保存各银行五维原始输入与每日刷新结果。
   - `scripts/fetch_fundamentals.py → refresh_light()`：**每日**用 akshare `stock_yjbb_em` 刷新每股净资产(BVPS)/ROE/**EPS（均按报告期年化）**，保证 PB 与派息率口径精确。
-  - `refresh_nii()`：非息收入占比 —— **半自动**，每日用必盈利润表 API 推算，需 `BIYING_API_KEY` 环境变量；缺 key/失败则保留手工值。
+  - `refresh_nii()`：非息收入占比 —— **兜底**：仅当东财 `REVENUE_RATIO` 缺失且设 `BIYING_API_KEY` 时，用必盈利润表 API 推算；否则保持东财自动值或手工值。
   - `refresh_div()`：每股分红 `div_ps` —— **自动**，每日用 akshare `stock_history_dividend_detail` 按股权登记日倒序取最新 2 次「已实施」派息（元/10 股）求和÷10，等于最近一个完整年度（本组合均为半年派，规避滚动 365 天窗口跨年抓到 3 次导致股息率/派息率虚高）。
   - 派息率 `div_payout`：**自动**，由 `div_ps ÷ 年化EPS` 计算（不再手工维护）。
   - `refresh_deep()`：**已启用并扩展**，每日用 akshare `stock_financial_analysis_indicator_em`（`按报告期` 取最新一期）自动刷新银行专属指标，写回底表：
@@ -47,10 +47,11 @@
      · `capital_adequacy` —— 资本充足率(总)(%)，部分行 EM 返回 nan 则保留底表值
      · `tier1_adequacy` —— 一级资本充足率(%)，底表参考（评分仍用核心一级 `core_tier1`）
      · `provision_ratio` —— 拨贷比(%)，**非**拨备覆盖率
-     所有字段含 NaN 守卫（NaN != NaN），EM 返回 nan 时跳过、保留底表手工值（不回退、不报错）。其中 `npl` 进五维评分（资产质量维）；`tier1_adequacy`/`capital_adequacy`/`provision_ratio` 目前仅写回底表参考，五维评分仍用人工维护的 `core_tier1`(核心一级) 与 `provision_coverage`(拨备覆盖率)。注：拨备覆盖率(`provision_coverage`)/核心一级(`core_tier1`)/杠杆率/存款结构/RORWA 在 EM 无对应字段，仍按季度手工维护。
+     · `non_interest_ratio` —— 非息收入占比(%)，**自动主源**：6 行实测 21~29%（招行 28.47 / 工行 21.18 / 宁波 25.71），与披露吻合；**替代必盈成为非息占比的自动主源**（无需 key），必盈仅作缺失兜底
+     所有字段含 NaN 守卫（NaN != NaN），EM 返回 nan 时跳过、保留底表手工值（不回退、不报错）。其中 `npl`/`non_interest_ratio` 进五维评分（`npl`→资产质量维、`non_interest_ratio`→中间业务维）；`tier1_adequacy`/`capital_adequacy`/`provision_ratio` 目前仅写回底表参考，五维评分仍用人工维护的 `core_tier1`(核心一级) 与 `provision_coverage`(拨备覆盖率)。注：拨备覆盖率(`provision_coverage`)/核心一级(`core_tier1`)/杠杆率/存款结构/RORWA 在 EM 无对应字段，仍按季度手工维护。
   - `refresh_research()`：**每日**用 akshare `stock_research_report_em` 自动抓取分析师研报评级（东财评级 + 近一月研报数 + 最新机构），写回底表并在网页新增「分析师研报评级」面板展示。**仅作展示，不进入五维评分（评分体系已固化）**。
   - 北向资金个股持股：原计划接入 `stock_hsgt_individual_em`，但实测该接口数据止于 **2024-08-16**，且 2024-08-19 起沪深港通暂停北向披露（聚合北向 `资金净流入` 亦归零），免费源已无当前北向数据 → **本阶段不接入**，留待付费源（必盈/Wind/Choice）或仅用南向。
-- **为什么不全自动**：akshare 旧版 `stock_financial_analysis_indicator`（非 `_em`）已失效，利润表/资产负债表原始科目列名漂移，港股接口在沙箱不稳定。但东财 `_em` 版 `stock_financial_analysis_indicator_em` 实测可用，已接入**不良率 / 资本充足率(总) / 一级资本充足率 / 拨贷比** 4 个质量字段的自动刷新；剩余仍人工季度更新的字段：**拨备覆盖率 / 核心一级资本充足率 / 存款结构 / RORWA / 零售护城河**。BVPS/ROE/EPS/div_ps/非息占比/净息差 已实现自动或半自动刷新。
+- **为什么不全自动**：akshare 旧版 `stock_financial_analysis_indicator`（非 `_em`）已失效，利润表/资产负债表原始科目列名漂移，港股接口在沙箱不稳定。但东财 `_em` 版 `stock_financial_analysis_indicator_em` 实测可用，已接入**不良率 / 资本充足率(总) / 一级资本充足率 / 拨贷比 / 非息收入占比(REVENUE_RATIO)** 5 个字段的自动刷新；剩余仍人工季度更新的字段：**拨备覆盖率 / 核心一级资本充足率 / 存款结构 / RORWA / 零售护城河**。BVPS/ROE/EPS/div_ps/非息占比/净息差(NIM) 已实现自动刷新，必盈 API 仅作非息占比缺失兜底。
 
 ## 每日运行
 
@@ -60,10 +61,10 @@ cd scripts
 python run_daily.py
 ```
 
-> 本地依赖（akshare / pandas / baostock 等）需装在 Python 3.11+ 虚拟环境中；若用本机托管环境，请先 `cd scripts` 再运行 `python run_daily.py`（脚本内部按仓库根目录定位文件）。可选环境变量：`BIYING_API_KEY`（开启非息占比半自动刷新）。
+> 本地依赖（akshare / pandas / baostock 等）需装在 Python 3.11+ 虚拟环境中；若用本机托管环境，请先 `cd scripts` 再运行 `python run_daily.py`（脚本内部按仓库根目录定位文件）。可选环境变量：`BIYING_API_KEY`（仅当东财 `REVENUE_RATIO` 缺失时，作为非息占比兜底抓取）。
 
 产出：
-- `fundamentals.json` — 财务底表（每日刷新 BVPS/ROE/EPS/div_ps/非息占比 后写回）
+- `fundamentals.json` — 财务底表（每日刷新 BVPS/ROE/EPS/div_ps/非息占比(东财REVENUE_RATIO)/净息差/不良率 后写回）
 - `history.jsonl` — 每日评分历史（按日期去重累积）
 - `docs/index.html` — 仪表盘（表格 + 五维雷达 + 各维条形）
 - `docs/history.html` — 历史趋势（总分 / PB）
@@ -118,8 +119,8 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 | 自动化 | 字段 | 来源 |
 |--------|------|------|
 | 自动 | BVPS / ROE / EPS(年化) / div_ps(每股分红) | akshare（`refresh_light` / `refresh_div`） |
-| 自动 | 不良率(npl) / 资本充足率(总)(capital_adequacy) / 一级资本充足率(tier1_adequacy) / 拨贷比(provision_ratio) | 东财 `refresh_deep`（NaN 守卫：EM 返回 nan 则保留底表值） |
-| 半自动 | 非息收入占比 | 必盈利润表 API（`refresh_nii`，需 `BIYING_API_KEY`） |
+| 自动 | 不良率(npl) / 资本充足率(总)(capital_adequacy) / 一级资本充足率(tier1_adequacy) / 拨贷比(provision_ratio) / 非息收入占比(non_interest_ratio) | 东财 `refresh_deep`（NaN 守卫：EM 返回 nan 则保留底表值） |
+| 兜底 | 非息收入占比 | 必盈利润表 API（`refresh_nii`，仅当东财 `REVENUE_RATIO` 缺失且设 `BIYING_API_KEY` 时启用） |
 | 展示 | 分析师研报评级（东财评级/近一月研报数/最新机构） | 东财 `refresh_research`（**不进五维评分**） |
 | 手工 | 拨备覆盖率 / 核心一级资本充足率 / 存款结构 / RORWA / 零售护城河 | 季度人工更新 `fundamentals.json` |
 

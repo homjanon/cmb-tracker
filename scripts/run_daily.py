@@ -40,16 +40,18 @@ def main():
     fund_cache = load_fundamentals()
     print("\n[1] 财务底表（fundamentals.json）...")
     refreshed = ff.refresh_light(banks, fund_cache)   # BVPS/ROE/EPS（动态报告期）
-    nii = ff.refresh_nii(banks)                       # 非息占比（半自动，必盈）
+    nii = ff.refresh_nii(banks)                       # 非息占比兜底（必盈，仅当东财 REVENUE_RATIO 缺失时启用）
     deep = ff.refresh_deep(banks)                     # 东财 F10 指标（净息差 + 不良率/资本充足率/一级资本充足率/拨贷比，自动）
     research = ff.refresh_research(banks)             # 分析师研报评级（东财，事件字段，不进评分）
     merged = {}
     for b in banks:
         base = fund_cache.get(b.code, {})
         rec = dict(base)
-        for src in (refreshed.get(b.code, {}), nii.get(b.code, {}), deep.get(b.code, {}),
-                    research.get(b.code, {})):
+        for src in (refreshed.get(b.code, {}), deep.get(b.code, {}), research.get(b.code, {})):
             rec.update({k: v for k, v in src.items() if v is not None})
+        # 非息占比：东财 REVENUE_RATIO 为主源（自动，来自 refresh_deep），必盈仅当 EM 无值时兜底
+        if rec.get("non_interest_ratio") is None:
+            rec.update({k: v for k, v in nii.get(b.code, {}).items() if v is not None})
         rec["code"] = b.code
         rec["name"] = b.name
         rec.setdefault("as_of", base.get("as_of", "未知"))
@@ -64,8 +66,8 @@ def main():
             with open(FUND_JSON, "w", encoding="utf-8") as f:
                 json.dump(merged, f, ensure_ascii=False, indent=2)
             print(f"    已刷新 {len([1 for v in refreshed.values() if v])} 只 BVPS/ROE/EPS、"
-                  f"{len([1 for v in nii.values() if v])} 只非息占比、"
-                  f"{len([1 for v in deep.values() if v])} 只东财指标、"
+                  f"{len([1 for v in deep.values() if v])} 只东财指标(含非息占比REVENUE_RATIO)、"
+                  f"{len([1 for v in nii.values() if v])} 只非息占比(必盈兜底)、"
                   f"{len([1 for v in research.values() if v])} 只研报评级")
     # 分红自动刷新（近365天已实施分红求和÷10）
     div = ff.refresh_div(banks)

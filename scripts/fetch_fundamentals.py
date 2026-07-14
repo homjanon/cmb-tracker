@@ -5,10 +5,11 @@
 
 架构（落地后）：
   银行的五维财务字段分三类自动化程度：
-    [自动]   BVPS / ROE(年化) / EPS(年化) / div_ps(每股分红)
+    [自动]   BVPS / ROE(年化) / EPS(年化) / div_ps(每股分红) / 非息收入占比
              —— BVPS/ROE/EPS 每日用 akshare stock_yjbb_em 动态报告期刷新；
-                div_ps 每日用 akshare stock_history_dividend_detail 取按股权登记日倒序最新2次已实施派息求和÷10（=最近一个完整年度，避免滚动365天窗口跨年抓到3次虚高）
-    [半自动] 非息收入占比            —— 每日用必盈利润表(income)推算，需 BIYING_API_KEY，缺则回退手工
+                div_ps 每日用 akshare stock_history_dividend_detail 取按股权登记日倒序最新2次已实施派息求和÷10（=最近一个完整年度，避免滚动365天窗口跨年抓到3次虚高）；
+                非息收入占比 每日用东财财务指标 REVENUE_RATIO（与 refresh_deep 同源，自动，无需 key）
+    [兜底]   非息收入占比            —— 必盈利润表(income)推算，仅当东财 REVENUE_RATIO 缺失且设 BIYING_API_KEY 时启用
     [手工]   拨备覆盖率/核心一级资本充足率/存款结构/RORWA/零售护城河
              —— 季度人工维护，见 fundamentals.json 的 _manual_maintain 标记，写回时不被 refresh_deep 覆盖
   → 设计：refresh_light() + refresh_nii() + refresh_deep() 每日调用；手工质量字段以 fundamentals.json 为真源。
@@ -88,7 +89,8 @@ def refresh_light(banks, cache: dict) -> dict:
 
 
 def _biying_nii(code, key):
-    """用必盈利润表推算单只 A 股非息占比。返回 (ratio, as_of) 或 None。"""
+    """[兜底] 必盈利润表推算单只 A 股非息占比。仅当东财 REVENUE_RATIO 缺失时启用。
+    返回 (ratio, as_of) 或 None。"""
     import json as _json, urllib.request
     url = f"https://api.biyingapi.com/hsstock/financial/income/{code}.SH/{key}"
     with urllib.request.urlopen(url, timeout=20) as r:
@@ -109,8 +111,8 @@ def _biying_nii(code, key):
 
 
 def refresh_nii(banks) -> dict:
-    """半自动：必盈利润表推算非息占比。需 BIYING_API_KEY；缺 key/失败则跳过(保持手工值)。
-    返回 {code: {non_interest_ratio, nii_as_of}}。"""
+    """[兜底] 必盈利润表推算非息占比：仅当东财 REVENUE_RATIO 缺失且设 BIYING_API_KEY 时启用；
+    缺 key/失败则跳过(保持东财值或手工值)。返回 {code: {non_interest_ratio, nii_as_of}}。"""
     import os
     key = os.environ.get("BIYING_API_KEY")
     if not key:
@@ -176,8 +178,9 @@ def refresh_div(banks) -> dict:
 
 
 def refresh_deep(banks) -> dict:
-    """自动：东财 F10 财务指标（净息差 NIM 等银行专属指标 + 监管比率）。
-    返回 {code: {net_interest_margin, net_interest_spread, npl, capital_adequacy, tier1_adequacy, provision_ratio}}。
+    """自动：东财 F10 财务指标（净息差 NIM 等银行专属指标 + 监管比率 + 非息占比）。
+    返回 {code: {net_interest_margin, net_interest_spread, npl, capital_adequacy,
+                 tier1_adequacy, provision_ratio, non_interest_ratio}}。
 
     实测可用字段（stock_financial_analysis_indicator_em，A类 HTTP/1.1 直连）：
       · NET_INTEREST_MARGIN / NET_INTEREST_SPREAD → 净息差 NIM / 价差（可靠）
@@ -185,6 +188,8 @@ def refresh_deep(banks) -> dict:
       · NEWCAPITALADER → 资本充足率(总)(%)，部分行 EM 返回 nan
       · FIRST_ADEQUACY_RATIO → 一级资本充足率(%)，作 core_tier1 代理
       · LOAN_PROVISION_RATIO → 拨贷比(%)，非拨备覆盖率
+      · REVENUE_RATIO → 非息收入占比(%)，6 行实测 21~29%（招行 28.47 / 工行 21.18 / 宁波 25.71），
+        与披露吻合；**作为非息占比的自动主源**（替代必盈，无需 key），必盈仅作兜底
     注：核心一级(core_tier1)/杠杆率(CAPITAL_LEVERAGE_RATIO=None)/拨备覆盖率(无直接字段)/存款结构/RORWA 在 EM 无对应字段，仍按季度手工维护于底表。
     所有字段含 NaN 守卫（NaN != NaN），nan 行跳过、保留底表手工值，不回退、不报错。"""
     out = {}
@@ -220,6 +225,9 @@ def refresh_deep(banks) -> dict:
             plr = _f(row.get("LOAN_PROVISION_RATIO"))
             if plr is not None and plr == plr:
                 rec["provision_ratio"] = round(plr, 2)
+            rev = _f(row.get("REVENUE_RATIO"))   # 非息收入占比(%)，自动主源
+            if rev is not None and rev == rev:
+                rec["non_interest_ratio"] = round(rev, 1)
             if rec:
                 out[b.code] = rec
     except Exception as e:
