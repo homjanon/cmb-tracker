@@ -149,7 +149,8 @@ def render(rows, fund, t0, out_path):
  .panel h3{{margin:0 0 10px;font-size:15px;color:#333}}
  .note{{font-size:12px;color:#999;line-height:1.7;margin-top:18px;
    background:#fff;padding:14px 16px;border-radius:10px}}
- @media(max-width:720px){{.grid{{grid-template-columns:1fr}}}}
+ .xq-summary{{white-space:pre-wrap;line-height:1.75;font-size:13px;color:#333}}
+@media(max-width:720px){{.grid{{grid-template-columns:1fr}}}}
 </style></head>
 <body><div class="wrap">
 <header><h1>招招五维模型 · 五大行每日追踪</h1>
@@ -166,6 +167,11 @@ def render(rows, fund, t0, out_path):
 <tr><th>银行</th><th class="num">现价</th><th class="num">买入区间(元)</th><th class="num">PE</th><th class="num">PB</th><th class="num">股息率%</th><th>五维(质量/负债/中间/资本/管理)</th><th class="num">总分</th><th>信号</th></tr>
 {''.join(trs)}
 </table>
+
+<div class="panel" style="margin-top:16px"><h3>雪球大V 追踪（每日观点汇总）</h3>
+  <div id="xq-summary" class="xq-summary">加载中…</div>
+  <div class="sub" id="xq-meta"></div>
+</div>
 
 <div class="grid">
   <div class="panel"><h3>五维雷达对比</h3><canvas id="radar" height="300"></canvas></div>
@@ -191,7 +197,38 @@ def render(rows, fund, t0, out_path):
 <script>
 new Chart(document.getElementById('radar'), {radar_cfg_json});
 new Chart(document.getElementById('bar'), {bar_cfg_json});
-</script></body></html>"""
+</script>
+"""
+
+    xq_script = r"""<script>
+(function(){
+  var API="https://api.github.com/repos/homjanon/xueqiu-tracker/contents/data/latest.json";
+  var CDN="https://cdn.jsdelivr.net/gh/homjanon/xueqiu-tracker@main/data/latest.json";
+  function fill(d){
+    var s=d&&d.daily_summary;
+    document.getElementById('xq-summary').textContent=(s&&s.trim())?s:"（今日暂无大V观点汇总）";
+    if(d&&d.fetched_at) document.getElementById('xq-meta').textContent="数据来源：xueqiu-tracker ｜ 抓取于 "+d.fetched_at;
+  }
+  function b64ToObj(b64){
+    var bin=atob(b64.replace(/\s/g,''));
+    var bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+  function tryUrl(url,isApi){
+    return fetch(url,{cache:'no-store'}).then(function(r){
+      if(!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(function(d){
+      return isApi ? (d&&d.content ? b64ToObj(d.content) : (function(){throw new Error('empty');})()) : d;
+    });
+  }
+  tryUrl(API,true).catch(function(){return tryUrl(CDN,false);}).then(fill)
+    .catch(function(){document.getElementById('xq-summary').textContent="（雪球大V数据暂不可得）";});
+})();
+</script>"""
+
+    html = html + xq_script + "</body></html>"
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
 
