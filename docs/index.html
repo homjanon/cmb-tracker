@@ -110,6 +110,11 @@
         </tr>
 </table>
 
+<div class="panel" style="margin-top:16px"><h3>雪球大V 追踪（每日观点汇总）</h3>
+  <div id="xq-summary" class="xq-summary">加载中…</div>
+  <div class="sub" id="xq-meta"></div>
+</div>
+
 <div class="grid">
   <div class="panel"><h3>五维雷达对比</h3><canvas id="radar" height="300"></canvas></div>
   <div class="panel"><h3>各维得分</h3><canvas id="bar" height="300"></canvas></div>
@@ -176,4 +181,33 @@
 <script>
 new Chart(document.getElementById('radar'), {"type": "radar", "data": {"labels": ["资产质量", "负债结构", "中间业务", "资本实力", "管理层"], "datasets": [{"label": "招行", "data": [18.5, 14.8, 12.6, 17.4, 16.6], "borderColor": "#c23531", "backgroundColor": "#c2353122", "pointBackgroundColor": "#c23531"}, {"label": "工行", "data": [10.3, 8.7, 7.3, 14.5, 8.0], "borderColor": "#2f4554", "backgroundColor": "#2f455422", "pointBackgroundColor": "#2f4554"}, {"label": "建行", "data": [11.5, 6.7, 7.2, 14.2, 8.0], "borderColor": "#61a0a8", "backgroundColor": "#61a0a822", "pointBackgroundColor": "#61a0a8"}, {"label": "农行", "data": [13.6, 13.4, 9.3, 12.1, 10.6], "borderColor": "#d48265", "backgroundColor": "#d4826522", "pointBackgroundColor": "#d48265"}, {"label": "中行", "data": [11.3, 4.1, 9.9, 9.7, 6.7], "borderColor": "#91c7ae", "backgroundColor": "#91c7ae22", "pointBackgroundColor": "#91c7ae"}, {"label": "宁波", "data": [18.7, 7.1, 10.5, 9.1, 12.4], "borderColor": "#749f83", "backgroundColor": "#749f8322", "pointBackgroundColor": "#749f83"}]}, "options": {"scales": {"r": {"min": 0, "max": 20, "ticks": {"stepSize": 5}}}, "plugins": {"legend": {"position": "bottom"}}}});
 new Chart(document.getElementById('bar'), {"type": "bar", "data": {"labels": ["招行", "工行", "建行", "农行", "中行", "宁波"], "datasets": [{"label": "总分", "data": [79.9, 48.8, 47.599999999999994, 59.0, 41.7, 57.8], "backgroundColor": ["#c23531", "#2f4554", "#61a0a8", "#d48265", "#91c7ae", "#749f83"]}]}, "options": {"plugins": {"legend": {"display": false}}, "scales": {"y": {"beginAtZero": true, "max": 100}}}});
-</script></body></html>
+</script>
+<script>
+(function(){
+  var API="https://api.github.com/repos/homjanon/xueqiu-tracker/contents/data/latest.json";
+  var CDN="https://cdn.jsdelivr.net/gh/homjanon/xueqiu-tracker@main/data/latest.json";
+  function fill(d){
+    var s=d&&d.daily_summary;
+    document.getElementById('xq-summary').textContent=(s&&s.trim())?s:"（今日暂无大V观点汇总）";
+    if(d&&d.fetched_at) document.getElementById('xq-meta').textContent="数据来源：xueqiu-tracker ｜ 抓取于 "+d.fetched_at;
+  }
+  function b64ToObj(b64){
+    var bin=atob(b64.replace(/\s/g,''));
+    var bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+  function tryUrl(url,isApi){
+    return fetch(url,{cache:'no-store'}).then(function(r){
+      if(!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(function(d){
+      return isApi ? (d&&d.content ? b64ToObj(d.content) : (function(){throw new Error('empty');})()) : d;
+    });
+  }
+  tryUrl(API,true).catch(function(){return tryUrl(CDN,false);}).then(fill)
+    .catch(function(){document.getElementById('xq-summary').textContent="（雪球大V数据暂不可得）";});
+})();
+</script>
+
+</body></html>
