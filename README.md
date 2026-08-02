@@ -31,6 +31,17 @@
 
 评分阈值详见 [`docs/scoring.md`](docs/scoring.md)。
 
+## 雪球大V 标的提及追踪表（雪球大V板块）
+
+仪表盘「雪球大V 追踪」板块在原有每日观点汇总（`xq-summary`，读 xueqiu-tracker 的 `latest.json`）之下，新增一张**标的提及追踪表**，数据来自 xueqiu-tracker 的 [`data/mentions.json`](https://raw.githubusercontent.com/homjanon/xueqiu-tracker/main/data/mentions.json)（GitHub API 主 + jsDelivr 兜底拉取）。
+
+**表格内容（全自动，不判断买卖方向）**
+- **账户栏（每人）**：上方「仓位」+ 下方「盈亏」，各带命中时间与是否来自自引段（引述）标记。例：紫金陈「仓位 买到55%的仓位（引述）/ 盈亏 今年收益率已经跑过上证」；谷子地「仓位 满融 / 盈亏 截止7月31日收盘，股市比年初亏0.03%」。
+- **标的行**：标的名称、最近点名时间（按时间倒序）、距今天数、原文摘录、数量。同一标的再次被点名则覆盖主行，「次数」可展开历史（保留最近 3 条）。超过 60 天未再提及的整行置灰。
+- 标名后带 `?` 表示该别名未收录进别名词典，可能与其他叫法重复计数。
+
+> 表由脚本自动生成：仅摘录大V**点名提到**的标的与对应原话，**不判断买卖方向**——请看「原文摘录」自行判断。转发引用段（//@ 之后）已剔除。页面由 `scripts/xq_table_block.py` 提供 CSS/HTML/JS，注入 `scripts/render_html.py` 共同生成 `docs/index.html`。
+
 ## 数据源与架构（关键）
 
 银行的五维财务字段中，质量字段（不良率/拨备/资本充足率/存款结构/RORWA）是**季度**数据、每日不变；而现价/PE/PB/股息率与部分财务字段是**每日**变化。因此采用「底表为真源 + 每日轻量刷新」的稳健设计：
@@ -141,7 +152,8 @@ cmb-tracker/
 │   ├── fetch_quotes.py           # 行情（腾讯/新浪/akshare）
 │   ├── fetch_fundamentals.py     # 财务底表刷新（light/nii/div/research 多路）
 │   ├── zhaozhao_five_dim.py      # 五维评分引擎（纯计算）
-│   ├── render_html.py            # HTML 渲染（仪表盘/历史）
+│   ├── render_html.py            # HTML 渲染（仪表盘/历史，注入雪球大V 标的提及追踪表）
+│   ├── xq_table_block.py         # 雪球大V 标的提及追踪表（CSS/HTML/JS，注入 render_html.py）
 │   ├── render_report.py          # JSON 产出（output/cmb_report.json）
 │   ├── run_daily.py              # 每日编排器
 │   ├── calibration.py            # 校准/缺失检查
