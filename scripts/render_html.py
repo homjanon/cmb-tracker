@@ -6,7 +6,12 @@ HTML 渲染：仪表盘（index.html）+ 历史趋势（history.html）
 """
 import json
 import os
+import sys
 from datetime import datetime
+
+# 雪球「标的提及追踪」表模块（与 xueqiu-tracker 共用同一份 xq_table_block.py）
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from xq_table_block import XQ_TABLE_CSS, XQ_TABLE_HTML, XQ_TABLE_JS
 
 SIGNAL_CN = {
     "STRONG_BUY": ("强烈买入", "#c23531"),
@@ -228,7 +233,12 @@ new Chart(document.getElementById('bar'), {bar_cfg_json});
 })();
 </script>"""
 
-    html = html + xq_script + "</body></html>"
+    # 注入雪球「标的提及追踪」表：CSS 进 <style>，HTML 容器接在 xq-meta 之后，
+    # 渲染脚本另起 <script>（走 GitHub API 主 + jsDelivr 兜底，不影响既有图表与摘要）
+    html = html.replace("</style>", XQ_TABLE_CSS + "</style>")
+    html = html.replace('<div class="sub" id="xq-meta"></div>',
+                         '<div class="sub" id="xq-meta"></div>' + XQ_TABLE_HTML)
+    html = html + xq_script + "<script>" + XQ_TABLE_JS + "</script>" + "</body></html>"
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
 
