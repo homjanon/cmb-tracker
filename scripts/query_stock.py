@@ -267,8 +267,13 @@ def us_ytd_high(code_str, year, today_str):
 
 
 def hk_ytd_high(code_str, year, today_str):
-    """港股 年内最高：优先 yfinance(纯前复权)；失败回退 腾讯 qfq K线。"""
-    h = yf_ytd_high(f"{code_str}.HK", year, today_str)
+    """港股 年内最高：优先 yfinance(纯前复权)；失败回退 腾讯 qfq K线。
+
+    注意：雅虎港股代码为 4 位无前导零（如 3968.HK），与腾讯的 hk03968
+    写法不同，需先剥前导零再补足 4 位，否则 yfinance 报 possibly delisted。
+    """
+    ticker = f"{int(code_str):04d}.HK"
+    h = yf_ytd_high(ticker, year, today_str)
     if h is not None:
         return h
     return stock_ytd_high(code_str, 'hk', year, today_str)
