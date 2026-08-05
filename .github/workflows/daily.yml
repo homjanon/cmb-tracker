@@ -62,6 +62,16 @@ jobs:
           open(os.environ["GITHUB_OUTPUT"], "a").write("trade=1\n")
           PY
 
+      - name: Run holdings drawdown (小散持仓回撤表)
+        # 必须先于 run_daily 渲染：run_daily 读取 holdings_drawdown.json 注入网页，
+        # 若渲染在前，新增标的/改成本要再触发一次才生效（顺序坑，2026-08-06 修复）
+        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        env:
+          TZ: Asia/Shanghai
+          HOLDINGS_JSON: ${{ secrets.HOLDINGS_JSON }}
+        run: |
+          python scripts/holdings_drawdown.py
+
       - name: Run daily tracker
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
         env:
@@ -70,14 +80,6 @@ jobs:
         run: |
           cd scripts
           python run_daily.py
-
-      - name: Run holdings drawdown (小散持仓回撤表)
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
-        env:
-          TZ: Asia/Shanghai
-          HOLDINGS_JSON: ${{ secrets.HOLDINGS_JSON }}
-        run: |
-          python scripts/holdings_drawdown.py
 
       - name: Commit & push results
         if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
