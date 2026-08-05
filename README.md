@@ -42,6 +42,39 @@
 
 > 表由脚本自动生成：仅摘录大V**点名提到**的标的与对应原话，**不判断买卖方向**——请看「原文摘录」自行判断。转发引用段（//@ 之后）已剔除。页面由 `scripts/xq_table_block.py` 提供 CSS/HTML/JS，注入 `scripts/render_html.py` 共同生成 `docs/index.html`。
 
+## 小散持仓回撤提醒表（持仓回撤板块）
+
+仪表盘在「雪球大V 追踪」板块**上方**新增一张**小散持仓回撤提醒表**，用于按自然年动态跟踪个人持仓从年内最高点的回撤，到阈值即提醒。
+
+**表格内容（5 列）**
+| 列 | 含义 |
+|----|------|
+| 标的 / 代码 | 持仓标的名称与代码 |
+| 今年最高盈利 | `(年内最高价 − 成本) / 成本`（需填成本；未填显示 —） |
+| 当前回撤 | `(年内最高价 − 当前价) / 年内最高价` |
+| 回撤提醒 | 当前回撤 ≥ 10% 时显示红色「年内回撤已达10个点」 |
+
+**动态基准（核心）**
+- 年内最高价 `ytd_high` 以**自然年**为单位：首跑/跨年用 K线（A股/港股）/净值（基金）/Nasdaq（美股）取年内最高**播种**；之后每日取实时价，若破前高则**刷新基准**（随新高滚动，新高处出现的更高点成为新基准）。
+- 回撤从该动态基准计算，到 10% 触发提醒；次年 1 月自动重置重新播种。
+- 价格口径统一用**不复权**（与腾讯实时价一致）：A股年内最高 43.02、港股 53.6 等均为不复权真实成交价；前复权口径会低估回撤，故不采用。
+
+**隐私设计**
+- 仓库只提交**派生指标**（回撤%、盈利%、提醒），**成本与市值永不进公开仓库**。
+- 成本来自 GitHub Secret `HOLDINGS_JSON`（格式 `[{"code","name","type","cost"}]`，`type` 取 `a_stock`/`hk`/`us`/`fund`），由每日 workflow 在运行时注入。
+- 未设 Secret 时回退到仓库内 `data/holdings_preset.json`（仅 code/name/type，无成本）→ 回撤表立即可见，盈利列显示 —，待你填成本后自动补全。
+
+**数据源（年内最高价播种 / 每日实时价）**
+- A股/港股/ETF/美股：腾讯 `qt.gtimg.cn`（实时）+ 腾讯 `fqkline` 不复权日K（播种）
+- 场外基金：天天基金 / 东方财富净值
+- 美股播种：Nasdaq 历史接口（腾讯 K线不含美股）
+- 相关脚本：`scripts/query_stock.py`（价格/年内最高）、`scripts/holdings_drawdown.py`（计算+状态）、`scripts/my_holdings_block.py`（注入 render_html.py 的 CSS/HTML/JS）
+
+**本地预填年内最高价（可选，借本地通达信/网络源一次性播种）**
+```bash
+python -m scripts.holdings_drawdown --seed-only --preset data/holdings_preset.json
+```
+
 ## 数据源与架构（关键）
 
 银行的五维财务字段中，质量字段（不良率/拨备/资本充足率/存款结构/RORWA）是**季度**数据、每日不变；而现价/PE/PB/股息率与部分财务字段是**每日**变化。因此采用「底表为真源 + 每日轻量刷新」的稳健设计：
@@ -78,14 +111,15 @@ python run_daily.py
 产出：
 - `fundamentals.json` — 财务底表（每日刷新 BVPS/ROE/EPS/div_ps/非息占比(东财REVENUE_RATIO)/净息差/不良率 后写回）
 - `history.jsonl` — 每日评分历史（按日期去重累积）
-- `docs/index.html` — 仪表盘（表格 + 五维雷达 + 各维条形）
+- `docs/index.html` — 仪表盘（表格 + 五维雷达 + 各维条形 + 雪球大V追踪表 + 小散持仓回撤表）
 - `docs/history.html` — 历史趋势（总分 / PB）
+- `data/holdings_drawdown.json` — 当日派生回撤表（注入仪表盘；无成本/市值，仅回撤%与盈利%）
 - `output/cmb_report.json` — 机器可读报告（外部可直接 fetch，详见下文「JSON 产出」）
 
 ## GitHub Actions 自动运行
 
 - 触发：`cron "10 7 * * 1-5"`（**UTC 07:10 = 北京时间 15:10**）+ 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。GitHub Actions 约 1h 排队延迟，实跑约 **北京时间 16:10 后**。
-- 流程：checkout → 装依赖 → 交易日判断 → `run_daily.py`（设 `BIYING_API_KEY`）→ 自动 commit `fundamentals.json`/`history.jsonl`/`docs/`/`output/`
+- 流程：checkout → 装依赖 → 交易日判断 → `run_daily.py`（设 `BIYING_API_KEY`）→ `holdings_drawdown.py`（设 `HOLDINGS_JSON` 可选，无则回退预置清单）→ 自动 commit `fundamentals.json`/`history.jsonl`/`docs/`/`output/`/`data/holdings_drawdown_state.json`/`data/holdings_drawdown.json`/`data/holdings_preset.json`
 - Pages：仓库 Settings → Pages → Source 选 `main` 分支 `/docs` 目录
 
 > 本机 `git push` 若被网络限制，可用仓库根目录的 `_api_sync.py`（GitHub Contents API 推送，需 `GITHUB_TOKEN`）替代。
@@ -152,14 +186,22 @@ cmb-tracker/
 │   ├── fetch_quotes.py           # 行情（腾讯/新浪/akshare）
 │   ├── fetch_fundamentals.py     # 财务底表刷新（light/nii/div/research 多路）
 │   ├── zhaozhao_five_dim.py      # 五维评分引擎（纯计算）
-│   ├── render_html.py            # HTML 渲染（仪表盘/历史，注入雪球大V 标的提及追踪表）
+│   ├── render_html.py            # HTML 渲染（仪表盘/历史，注入雪球大V 追踪表 + 小散持仓回撤表）
 │   ├── xq_table_block.py         # 雪球大V 标的提及追踪表（CSS/HTML/JS，注入 render_html.py）
+│   ├── my_holdings_block.py      # 小散持仓回撤提醒表（CSS/HTML/JS，注入 render_html.py）
+│   ├── query_stock.py            # 实时价 + 年内最高价（A/港/美/ETF/基金，多源）
+│   ├── holdings_drawdown.py      # 小散持仓回撤计算（读成本Secret/预置 → 动态基准 → 派生表）
+│   ├── build_my_preview.py       # 本地预览构建（桌面持仓 + mentions.json 合成整页）
 │   ├── render_report.py          # JSON 产出（output/cmb_report.json）
-│   ├── run_daily.py              # 每日编排器
+│   ├── run_daily.py              # 每日编排器（含注入回撤表）
 │   ├── calibration.py            # 校准/缺失检查
 │   └── retry_utils.py            # 重试/多源容错
 ├── fundamentals.json             # 财务底表（真源 + 每日刷新结果）
 ├── history.jsonl                 # 每日历史
+├── data/
+│   ├── holdings_preset.json      # 预置标的清单（无成本，无 Secret 时驱动回撤表）
+│   ├── holdings_drawdown_state.json  # 年内最高价动态基准状态（每日刷新、提交）
+│   └── holdings_drawdown.json    # 当日派生回撤表（注入仪表盘）
 ├── output/
 │   └── cmb_report.json           # 机器可读报告
 ├── docs/                         # GitHub Pages 产物

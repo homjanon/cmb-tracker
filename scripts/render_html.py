@@ -12,6 +12,7 @@ from datetime import datetime
 # 雪球「标的提及追踪」表模块（与 xueqiu-tracker 共用同一份 xq_table_block.py）
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from xq_table_block import XQ_TABLE_CSS, XQ_TABLE_HTML, XQ_TABLE_JS
+from my_holdings_block import my_holdings_css, my_holdings_html, my_holdings_js
 
 SIGNAL_CN = {
     "STRONG_BUY": ("强烈买入", "#c23531"),
@@ -29,7 +30,7 @@ def _signal_badge(sig):
     cn, color = SIGNAL_CN.get(sig, ("未知", "#999"))
     return f'<span class="badge" style="background:{color}">{cn}</span>'
 
-def render(rows, fund, t0, out_path):
+def render(rows, fund, t0, out_path, my_holdings=None, xqm_inline=None):
     date_str = t0.strftime("%Y-%m-%d %H:%M")
     # 表格行
     trs = []
@@ -235,10 +236,14 @@ new Chart(document.getElementById('bar'), {bar_cfg_json});
 
     # 注入雪球「标的提及追踪」表：CSS 进 <style>，HTML 容器接在 xq-meta 之后，
     # 渲染脚本另起 <script>（走 GitHub API 主 + jsDelivr 兜底，不影响既有图表与摘要）
-    html = html.replace("</style>", XQ_TABLE_CSS + "</style>")
+    html = html.replace("</style>", my_holdings_css() + XQ_TABLE_CSS + "</style>")
     html = html.replace('<div class="sub" id="xq-meta"></div>',
                          '<div class="sub" id="xq-meta"></div>' + XQ_TABLE_HTML)
-    html = html + xq_script + "<script>" + XQ_TABLE_JS + "</script>" + "</body></html>"
+    html = html.replace('<div class="panel" style="margin-top:16px"><h3>雪球大V 追踪（每日观点汇总）</h3>',
+                         my_holdings_html() + '<div class="panel" style="margin-top:16px"><h3>雪球大V 追踪（每日观点汇总）</h3>')
+    xqm_inline_script = ('<script>window.__XQM_INLINE__=' + json.dumps(xqm_inline, ensure_ascii=False) + ';</script>') if xqm_inline else ''
+    myh_inline = '<script>window.__MY_HOLDINGS__=' + json.dumps(my_holdings or [], ensure_ascii=False) + ';</script>'
+    html = html + xqm_inline_script + xq_script + myh_inline + "<script>" + XQ_TABLE_JS + "</script>" + "<script>" + my_holdings_js() + "</script>" + "</body></html>"
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
 

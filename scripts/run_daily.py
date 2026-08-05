@@ -130,7 +130,16 @@ def main():
     # 5) 渲染 HTML
     print("\n[5] 渲染 HTML → docs/index.html ...")
     os.makedirs(DOCS, exist_ok=True)
-    render_html.render(rows, merged, t0, os.path.join(DOCS, "index.html"))
+    # 小散持仓回撤表：读取当日派生数据（无成本/市值，仅回撤与盈利%）
+    my_holdings = None
+    hd_path = os.path.join(ROOT, "data", "holdings_drawdown.json")
+    if os.path.exists(hd_path):
+        try:
+            my_holdings = json.load(open(hd_path, encoding="utf-8")).get("items", [])
+            print(f"[5] 已载入 {len(my_holdings)} 条小散持仓回撤数据")
+        except Exception as e:
+            print(f"[5] 读取 holdings_drawdown.json 失败：{e}")
+    render_html.render(rows, merged, t0, os.path.join(DOCS, "index.html"), my_holdings=my_holdings)
     render_html.render_history(HISTORY, os.path.join(DOCS, "history.html"))
 
     # 6) JSON 产出（供外部 fetch 调用，对齐 xiaoxu-fear 的 xxfi_report.json）

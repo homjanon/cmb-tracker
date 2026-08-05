@@ -1,0 +1,40 @@
+{
+  "updated_at": "2026-08-06",
+  "items": [
+    {
+      "code": "600036",
+      "name": "招商银行",
+      "ytd_high_profit_pct": null,
+      "current_drawdown_pct": 9.48,
+      "reminder": ""
+    },
+    {
+      "code": "03968",
+      "name": "招商银行",
+      "ytd_high_profit_pct": null,
+      "current_drawdown_pct": 9.03,
+      "reminder": ""
+    },
+    {
+      "code": "QQQM",
+      "name": "QQQM",
+      "ytd_high_profit_pct": null,
+      "current_drawdown_pct": 4.17,
+      "reminder": ""
+    },
+    {
+      "code": "014002",
+      "name": "浦银安盛全球智能科技(QDII)C",
+      "ytd_high_profit_pct": null,
+      "current_drawdown_pct": 10.36,
+      "reminder": "年内回撤已达10个点"
+    },
+    {
+      "code": "050025",
+      "name": "博时标普500ETF联接A",
+      "ytd_high_profit_pct": null,
+      "current_drawdown_pct": 0.0,
+      "reminder": ""
+    }
+  ]
+}
