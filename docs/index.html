@@ -29,6 +29,26 @@
  .xq-summary{white-space:pre-wrap;line-height:1.75;font-size:13px;color:#333}
 @media(max-width:720px){.grid{grid-template-columns:1fr}}
 
+ .myh{margin-top:6px;margin-bottom:18px}
+ .myh-hd{font-size:14px;font-weight:600;color:#333;margin-bottom:8px;
+   display:flex;align-items:baseline;gap:8px}
+ .myh-hd .sub{font-size:11px;font-weight:400;color:#aaa}
+ .myh table{margin:0;box-shadow:none;border:1px solid #f0f0f0}
+ .myh th{background:#fafafa;font-size:12px;padding:8px 10px}
+ .myh td{padding:8px 10px;font-size:13px;vertical-align:middle}
+ .myh-sym{font-weight:600;color:#333;white-space:nowrap}
+ .myh-code{color:#888;font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+ .myh-num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+ .myh-pos{color:#c23531;font-weight:600}   /* 盈利为正：红 */
+ .myh-neg{color:#1a9e57;font-weight:600}   /* 盈利为负：绿 */
+ .myh-dd{color:#1a9e57;font-weight:600}    /* 回撤为跌：绿 */
+ .myh-alert{color:#fff;background:#c23531;font-weight:700;font-size:12.5px;
+   padding:3px 8px;border-radius:4px;white-space:nowrap}
+ .myh-empty{color:#aaa;font-size:12px;padding:10px 0}
+ .myh-foot{font-size:11px;color:#aaa;margin-top:8px;line-height:1.7}
+@keyframes myhblink{0%,100%{opacity:1}50%{opacity:.55}}
+ .myh tr.alert td{background:#fdeaea}
+
  .xqm{margin-top:14px;border-top:1px solid #f0f0f0;padding-top:14px}
  .xqm-user{margin-bottom:18px}
  .xqm-user:last-child{margin-bottom:0}
@@ -69,7 +89,7 @@
 </style></head>
 <body><div class="wrap">
 <header><h1>招招五维模型 · 五大行每日追踪</h1>
-<div class="meta">更新时间：2026-08-05 17:47 ｜ 标的：招商/工商/建设/农业/中国/宁波（交行已排除）｜ 数据源：腾讯/新浪/akshare/baostock</div></header>
+<div class="meta">更新时间：2026-08-06 06:28 ｜ 标的：招商/工商/建设/农业/中国/宁波（交行已排除）｜ 数据源：腾讯/新浪/akshare/baostock</div></header>
 
 <div class="cards">
   <div class="card"><div class="t">追踪标的数</div><div class="v">6</div></div>
@@ -83,7 +103,7 @@
 
         <tr>
           <td><b>招商银行</b><br><span class="code">600036</span></td>
-          <td class="num" title="价数据源：tencent｜抓取：2026-08-05T17:48:44.005486+08:00">38.94</td>
+          <td class="num" title="价数据源：tencent｜抓取：2026-08-06T06:29:30.305568+08:00">38.94</td>
           <td class="num">30.63 ~ 39.38<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
           <td class="num" title="PE 数据源：tencent">6.51</td>
           <td class="num" title="PB 数据源：tencent">0.89</td>
@@ -94,7 +114,7 @@
         </tr>
         <tr>
           <td><b>工商银行</b><br><span class="code">601398</span></td>
-          <td class="num" title="价数据源：tencent｜抓取：2026-08-05T17:48:44.005486+08:00">7.52</td>
+          <td class="num" title="价数据源：tencent｜抓取：2026-08-06T06:29:30.305568+08:00">7.52</td>
           <td class="num">7.63 ~ 9.81<br><span style="color:#c23531;font-size:11px">低于强买线</span></td>
           <td class="num" title="PE 数据源：tencent">7.22</td>
           <td class="num" title="PB 数据源：tencent">0.69</td>
@@ -105,7 +125,7 @@
         </tr>
         <tr>
           <td><b>建设银行</b><br><span class="code">601939</span></td>
-          <td class="num" title="价数据源：tencent｜抓取：2026-08-05T17:48:44.005486+08:00">9.96</td>
+          <td class="num" title="价数据源：tencent｜抓取：2026-08-06T06:29:30.305568+08:00">9.96</td>
           <td class="num">9.30 ~ 11.95<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
           <td class="num" title="PE 数据源：tencent">7.62</td>
           <td class="num" title="PB 数据源：tencent">0.75</td>
@@ -116,7 +136,7 @@
         </tr>
         <tr>
           <td><b>农业银行</b><br><span class="code">601288</span></td>
-          <td class="num" title="价数据源：tencent｜抓取：2026-08-05T17:48:44.005486+08:00">6.48</td>
+          <td class="num" title="价数据源：tencent｜抓取：2026-08-06T06:29:30.305568+08:00">6.48</td>
           <td class="num">5.53 ~ 7.11<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
           <td class="num" title="PE 数据源：tencent">7.71</td>
           <td class="num" title="PB 数据源：tencent">0.82</td>
@@ -127,7 +147,7 @@
         </tr>
         <tr>
           <td><b>中国银行</b><br><span class="code">601988</span></td>
-          <td class="num" title="价数据源：tencent｜抓取：2026-08-05T17:48:44.005486+08:00">5.73</td>
+          <td class="num" title="价数据源：tencent｜抓取：2026-08-06T06:29:30.305568+08:00">5.73</td>
           <td class="num">5.90 ~ 7.58<br><span style="color:#c23531;font-size:11px">低于强买线</span></td>
           <td class="num" title="PE 数据源：tencent">7.53</td>
           <td class="num" title="PB 数据源：tencent">0.68</td>
@@ -138,7 +158,7 @@
         </tr>
         <tr>
           <td><b>宁波银行</b><br><span class="code">002142</span></td>
-          <td class="num" title="价数据源：tencent｜抓取：2026-08-05T17:48:44.005486+08:00">31.65</td>
+          <td class="num" title="价数据源：tencent｜抓取：2026-08-06T06:29:30.305568+08:00">31.65</td>
           <td class="num">27.36 ~ 36.48<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
           <td class="num" title="PE 数据源：tencent">6.94</td>
           <td class="num" title="PB 数据源：tencent">0.92</td>
@@ -149,6 +169,16 @@
         </tr>
 </table>
 
+
+<div class="myh" id="myh-root">
+  <div class="myh-hd">小散持仓回撤<span class="sub">年内最高价动态回撤 · 达10%提醒</span></div>
+  <div class="myh-empty">持仓回撤数据加载中…</div>
+</div>
+<div class="myh-foot">
+表格由脚本自动生成：<b>今年最高盈利</b>＝以年内最高价计算的代表盈亏（红涨绿跌）；
+<b>当前回撤</b>＝（年内最高价 − 当前价）÷ 年内最高价，按自然年滚动、随新高刷新基准；
+<b>回撤提醒</b>＝当前回撤≥10% 时提示「年内回撤已达10个点」。<b>不展示成本与市值</b>。
+</div>
 <div class="panel" style="margin-top:16px"><h3>雪球大V 追踪（每日观点汇总）</h3>
   <div id="xq-summary" class="xq-summary">加载中…</div>
   <div class="sub" id="xq-meta"></div>
@@ -256,7 +286,7 @@ new Chart(document.getElementById('bar'), {"type": "bar", "data": {"labels": ["�
   tryUrl(API,true).catch(function(){return tryUrl(CDN,false);}).then(fill)
     .catch(function(){document.getElementById('xq-summary').textContent="（雪球大V数据暂不可得）";});
 })();
-</script><script>
+</script><script>window.__MY_HOLDINGS__=[{"code": "600036", "name": "招商银行", "ytd_high_profit_pct": null, "current_drawdown_pct": 9.48, "reminder": ""}, {"code": "03968", "name": "招商银行", "ytd_high_profit_pct": null, "current_drawdown_pct": 9.03, "reminder": ""}, {"code": "QQQM", "name": "QQQM", "ytd_high_profit_pct": null, "current_drawdown_pct": 4.17, "reminder": ""}, {"code": "014002", "name": "浦银安盛全球智能科技(QDII)C", "ytd_high_profit_pct": null, "current_drawdown_pct": 10.36, "reminder": "年内回撤已达10个点"}, {"code": "050025", "name": "博时标普500ETF联接A", "ytd_high_profit_pct": null, "current_drawdown_pct": 0.0, "reminder": ""}];</script><script>
 (function(){
   var MENT_API="https://api.github.com/repos/homjanon/xueqiu-tracker/contents/data/mentions.json";
   var MENT_CDN="https://cdn.jsdelivr.net/gh/homjanon/xueqiu-tracker@main/data/mentions.json";
@@ -363,5 +393,43 @@ new Chart(document.getElementById('bar'), {"type": "bar", "data": {"labels": ["�
       var root=document.getElementById('xqm-root');
       if(root) root.innerHTML='<div class="xqm-empty">（标的提及数据暂不可得）</div>';
     });
+})();
+</script><script>
+(function(){
+  var THRESH=10;
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+  function pct(v){
+    if(v==null||isNaN(v)) return '<span style="color:#bbb">—</span>';
+    var cls = v>=0 ? 'myh-pos':'myh-neg';
+    var sign = v>0?'+':'';
+    return '<span class="'+cls+'">'+sign+v.toFixed(2)+'%</span>';
+  }
+  function rowHtml(h){
+    var alert = (h.reminder && h.current_drawdown_pct!=null && h.current_drawdown_pct>=THRESH);
+    var dd = (h.current_drawdown_pct==null)?'<span style="color:#bbb">—</span>'
+             : '<span class="myh-dd">'+h.current_drawdown_pct.toFixed(2)+'%</span>';
+    var rem = alert ? '<span class="myh-alert">'+esc(h.reminder)+'</span>' : '<span style="color:#bbb">—</span>';
+    return '<tr'+(alert?' class="alert"':'')+'>'+
+      '<td><span class="myh-sym">'+esc(h.name)+'</span></td>'+
+      '<td class="myh-code">'+esc(h.code)+'</td>'+
+      '<td class="myh-num">'+pct(h.ytd_high_profit_pct)+'</td>'+
+      '<td class="myh-num">'+dd+'</td>'+
+      '<td>'+rem+'</td></tr>';
+  }
+  function render(list){
+    var root=document.getElementById('myh-root');
+    if(!root) return;
+    if(!list || !list.length){root.innerHTML='<div class="myh-empty">（暂无持仓回撤数据）</div>';return;}
+    var rows=list.map(rowHtml).join("");
+    root.innerHTML='<table><thead><tr>'+
+      '<th style="width:120px">标的</th><th style="width:80px">代码</th>'+
+      '<th style="width:120px;text-align:right">今年最高盈利</th>'+
+      '<th style="width:110px;text-align:right">当前回撤</th>'+
+      '<th style="width:150px">回撤提醒</th>'+
+      '</tr></thead><tbody>'+rows+'</tbody></table>';
+  }
+  if(window.__MY_HOLDINGS__) { render(window.__MY_HOLDINGS__); return; }
+  // 兜底：若页面未内联，可在此加 fetch；当前 cmb 页面构建时已内联
 })();
 </script></body></html>
