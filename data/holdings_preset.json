@@ -1,6 +1,6 @@
 [
   {"code": "600036", "name": "招商银行", "type": "a_stock"},
-  {"code": "03968", "name": "招商银行", "type": "hk"},
+  {"code": "03968", "name": "招商银行H", "type": "hk"},
   {"code": "QQQM", "name": "QQQM", "type": "us"},
   {"code": "014002", "name": "浦银安盛全球智能科技(QDII)C", "type": "fund"},
   {"code": "050025", "name": "博时标普500ETF联接A", "type": "fund"}
