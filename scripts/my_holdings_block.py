@@ -1,9 +1,10 @@
 """小散持仓回撤表：CSS + HTML 容器 + 渲染脚本。
 
 单一事实来源：本地预览与 cmb-tracker/scripts/render_html.py 共用。
-列：标的 / 代码 / 今年最高盈利 / 当前回撤 / 回撤提醒。
+列：标的 / 代码 / 最高盈利 / 当前盈利 / 盈利回撤 / 市场回撤 / 提醒。
 不展示成本、不展示市值、不展示价格（仅百分比）。成本只在计算期使用，不进仓库。
-回撤 >= 阈值（默认 10%）时，「回撤提醒」列显示红字「年内回撤已达10个点」。
+提醒：当前盈利 ≥5% 且从最高盈利相对回撤 ≥10% 时，红字「盈利回撤≥X%，考虑止盈」。
+基准为持仓以来最高（前复权），跨年不重置、只升不降（2026-08-06 用户决策）。
 """
 
 
@@ -34,13 +35,15 @@ def my_holdings_css():
 def my_holdings_html():
     return """
 <div class="myh" id="myh-root">
-  <div class="myh-hd">小散持仓回撤<span class="sub">年内最高价动态回撤 · 达10%提醒</span></div>
+  <div class="myh-hd">小散持仓回撤<span class="sub">持仓以来最高 · 盈利回撤≥10%提醒止盈</span></div>
   <div class="myh-empty">持仓回撤数据加载中…</div>
 </div>
 <div class="myh-foot">
-表格由脚本自动生成：<b>今年最高盈利</b>＝以年内最高价计算的代表盈亏（红涨绿跌）；
-<b>当前回撤</b>＝（年内最高价 − 当前价）÷ 年内最高价，按自然年滚动、随新高刷新基准；
-<b>回撤提醒</b>＝当前回撤≥10% 时提示「年内回撤已达10个点」。<b>不展示成本与市值</b>。
+表格由脚本自动生成：<b>最高盈利</b>＝以持仓以来最高价（前复权）计算的代表盈亏（红涨绿跌）；
+<b>当前盈利</b>＝（当前价 − 成本）÷ 成本；<b>盈利回撤</b>＝最高盈利 − 当前盈利（百分点，跌为绿）；
+<b>市场回撤</b>＝（持仓以来最高价 − 当前价）÷ 最高价（仅参考，不触发提醒）。
+<b>提醒</b>＝当前盈利 ≥5% 且从最高盈利相对回撤 ≥10% 时提示「考虑止盈」。
+基准为持仓以来最高、<b>跨年不重置</b>（只升不降）。<b>不展示成本与市值</b>。
 </div>
 """
 
@@ -48,7 +51,6 @@ def my_holdings_html():
 def my_holdings_js():
     return r"""
 (function(){
-  var THRESH=10;
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
   function pct(v){
@@ -58,15 +60,20 @@ def my_holdings_js():
     return '<span class="'+cls+'">'+sign+v.toFixed(2)+'%</span>';
   }
   function rowHtml(h){
-    var alert = (h.reminder && h.current_drawdown_pct!=null && h.current_drawdown_pct>=THRESH);
-    var dd = (h.current_drawdown_pct==null)?'<span style="color:#bbb">—</span>'
+    var alert = !!h.reminder;
+    var cur = (h.current_profit_pct==null)?'<span style="color:#bbb">—</span>':pct(h.current_profit_pct);
+    var pdd = (h.profit_drawdown_pct==null)?'<span style="color:#bbb">—</span>'
+             : '<span class="myh-dd">-'+h.profit_drawdown_pct.toFixed(2)+'pp</span>';
+    var mkt = (h.current_drawdown_pct==null)?'<span style="color:#bbb">—</span>'
              : '<span class="myh-dd">'+h.current_drawdown_pct.toFixed(2)+'%</span>';
     var rem = alert ? '<span class="myh-alert">'+esc(h.reminder)+'</span>' : '<span style="color:#bbb">—</span>';
     return '<tr'+(alert?' class="alert"':'')+'>'+
       '<td><span class="myh-sym">'+esc(h.name)+'</span></td>'+
       '<td class="myh-code">'+esc(h.code)+'</td>'+
       '<td class="myh-num">'+pct(h.ytd_high_profit_pct)+'</td>'+
-      '<td class="myh-num">'+dd+'</td>'+
+      '<td class="myh-num">'+cur+'</td>'+
+      '<td class="myh-num">'+pdd+'</td>'+
+      '<td class="myh-num">'+mkt+'</td>'+
       '<td>'+rem+'</td></tr>';
   }
   function render(list){
@@ -76,9 +83,11 @@ def my_holdings_js():
     var rows=list.map(rowHtml).join("");
     root.innerHTML='<table><thead><tr>'+
       '<th style="width:120px">标的</th><th style="width:80px">代码</th>'+
-      '<th style="width:120px;text-align:right">今年最高盈利</th>'+
-      '<th style="width:110px;text-align:right">当前回撤</th>'+
-      '<th style="width:150px">回撤提醒</th>'+
+      '<th style="width:110px;text-align:right">最高盈利</th>'+
+      '<th style="width:110px;text-align:right">当前盈利</th>'+
+      '<th style="width:100px;text-align:right">盈利回撤</th>'+
+      '<th style="width:100px;text-align:right">市场回撤</th>'+
+      '<th style="width:160px">提醒</th>'+
       '</tr></thead><tbody>'+rows+'</tbody></table>';
   }
   if(window.__MY_HOLDINGS__) { render(window.__MY_HOLDINGS__); return; }
