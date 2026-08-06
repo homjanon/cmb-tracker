@@ -1,12 +1,14 @@
-"""小散持仓回撤计算：读持仓 → 拉实时价 → 维护年内最高价 → 算派生回撤表。
+"""小散持仓回撤计算：读持仓 → 拉实时价 → 维护持仓以来最高价 → 算盈利回撤表。
 
 - 价格：复用 query_stock（A/港/美股/ETF 腾讯；场外基金 天天基金/东财）。
-- 年内最高价 ytd_high：首跑/跨年用 K线(腾讯)/净值(东财) 取年内最高播种；
-  之后每日取价，若 > ytd_high 则刷新（动态基准，随新高更新）。
+- 持仓以来最高价 ytd_high（前复权口径，**跨年不重置**，2026-08-06 用户决策）：
+  首跑/新增标的使用近3-5年历史最高播种；之后每日取价，破新高则刷新（只升不降）。
 - 派生指标（仅这些提交展示，成本/市值不进仓库）：
-    今年最高盈利% = (ytd_high - cost) / cost * 100
-    当前回撤%    = (ytd_high - current) / ytd_high * 100
-    回撤提醒     = 当前回撤% >= THRESHOLD(10) 时 "年内回撤已达10个点"
+    今年最高盈利%  = (ytd_high - cost) / cost * 100
+    当前持仓盈利%  = (current - cost) / cost * 100
+    盈利回撤(pp)   = 今年最高盈利% - 当前持仓盈利%
+    市场回撤%      = (ytd_high - current) / ytd_high * 100（仅参考，不触发提醒）
+    回撤提醒       = 当前盈利% ≥5 且 从最高盈利相对回撤 ≥10% 时 "盈利回撤≥10%，考虑止盈"
 - 成本来源：生产用环境变量 HOLDINGS_JSON（GitHub Secret，用户精选的持仓列表）；
   预览用 user-data.json（按 keep_codes 取指定批次）。
 """
@@ -18,7 +20,8 @@ import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from query_stock import price_of, stock_ytd_high, fund_ytd_high, us_ytd_high, hk_ytd_high
 
-THRESHOLD = 10  # 回撤提醒阈值（%）
+PROFIT_DD_THRESH = 10   # 盈利回撤提醒阈值：从最高盈利相对回撤 ≥10% 提醒止盈
+MIN_PROFIT_PCT = 5      # 最低当前盈利门槛(%)：当前盈利 <5% 不提醒（防薄利润标的误触发）
 
 TYPE_MAP = {'a-stock': 'a_stock', 'hk-stock': 'hk', 'us-stock': 'us', 'fund': 'fund'}
 
@@ -80,12 +83,11 @@ def seed_ytd_high(code, qtype, year, today_str):
 
 
 def seed_state(holdings, year, today_str):
-    """一次性播种年内最高价（本地预填 / 新增标的补种）。返回 state dict。
+    """一次性播种持仓以来最高价（本地预填 / 新增标的补种）。返回 state dict。
 
-    按类型选源（均统一为前复权/纯剔除分红口径，与A股一致）：
-      - A股 → 腾讯 qfq K线；港股 → yfinance 纯前复权（兜底腾讯 qfq）
-      - 美股/ETF → yfinance 纯前复权（兜底 Nasdaq 不复权）
-      - 基金 → 东财净值（NAV 本身已除权，无需再调整）
+    窗口：A股 腾讯 qfq 近3年（接口上限~800根）；港股/美股 yfinance 近5年；
+          基金 东财净值 近3年。此后只升不降、跨年不重置（2026-08-06 用户决策）。
+    口径：均统一为前复权/纯剔除分红（与A股一致）。
     GitHub Action 无通达信，故播种统一走网络源。
     """
     state = {'year': year, 'items': {}}
@@ -93,9 +95,9 @@ def seed_state(holdings, year, today_str):
         yh = seed_ytd_high(h['code'], h['type'], year, today_str)
         if yh:
             state['items'][h['code']] = {'ytd_high': yh, 'ytd_high_date': today_str}
-            print(f"[seed] {h['code']} {h['name']} 年内最高 {yh}")
+            print(f"[seed] {h['code']} {h['name']} 持仓以来最高 {yh}")
         else:
-            print(f"[seed] {h['code']} {h['name']} 取年内最高失败，留空（运行时以现价当高点）")
+            print(f"[seed] {h['code']} {h['name']} 取持仓以来最高失败，留空（运行时以现价当高点）")
     return state
 
 
@@ -104,9 +106,7 @@ def compute(holdings, state, today=None):
     year = today.year
     today_str = today.strftime('%Y-%m-%d')
     items = state.setdefault('items', {})
-    if state.get('year') != year:
-        items.clear()
-        state['year'] = year
+    state['year'] = year  # 仅记录年份，**不再跨年清空**（持仓以来最高，跨年不重置）
     derived = []
     for h in holdings:
         code = h['code']
@@ -116,6 +116,8 @@ def compute(holdings, state, today=None):
             # 取不到价：保留上次 high，标记暂无（不误报）
             derived.append({'code': code, 'name': h['name'],
                             'ytd_high_profit_pct': None,
+                            'current_profit_pct': None,
+                            'profit_drawdown_pct': None,
                             'current_drawdown_pct': None, 'reminder': ''})
             continue
         if not it or not it.get('ytd_high'):
@@ -127,14 +129,26 @@ def compute(holdings, state, today=None):
             it['ytd_high_date'] = today_str
         items[code] = it
         yh = it['ytd_high']
-        ytd_profit = (yh - h['cost']) / h['cost'] * 100 if h['cost'] else None
+        cost = h['cost']
+        cur_profit = (cur - cost) / cost * 100 if cost else None
+        ytd_profit = (yh - cost) / cost * 100 if cost else None
         drawdown = (yh - cur) / yh * 100 if yh else None
-        alert = (drawdown is not None and drawdown >= THRESHOLD)
+        profit_dd = (ytd_profit - cur_profit) if (ytd_profit is not None
+                                                  and cur_profit is not None) else None
+        # 提醒：从最高盈利相对回撤 ≥10%，且当前盈利 ≥5%（防薄利润误触发）
+        reminder = ''
+        if (cost and cur_profit is not None and ytd_profit is not None
+                and ytd_profit > 0 and cur_profit >= MIN_PROFIT_PCT):
+            rel = (ytd_profit - cur_profit) / ytd_profit * 100
+            if rel >= PROFIT_DD_THRESH:
+                reminder = f'盈利回撤{rel:.0f}%，考虑止盈'
         derived.append({
             'code': code, 'name': h['name'],
             'ytd_high_profit_pct': round(ytd_profit, 2) if ytd_profit is not None else None,
+            'current_profit_pct': round(cur_profit, 2) if cur_profit is not None else None,
+            'profit_drawdown_pct': round(profit_dd, 2) if profit_dd is not None else None,
             'current_drawdown_pct': round(drawdown, 2) if drawdown is not None else None,
-            'reminder': '年内回撤已达10个点' if alert else '',
+            'reminder': reminder,
         })
     state['updated_at'] = today_str
     return derived
@@ -156,7 +170,7 @@ def save_state(state, path):
 
 def main():
     """生产入口：读 HOLDINGS_JSON（Secret） → 拉价 → 更新 state → 写派生文件。
-    --seed-only：仅用 --preset 或 HOLDINGS_JSON 播种年内最高价到 state（本地预填/补种）。
+    --seed-only：仅用 --preset 或 HOLDINGS_JSON 播种持仓以来最高价到 state（本地预填/补种）。
     """
     import argparse
     ap = argparse.ArgumentParser()
@@ -188,7 +202,7 @@ def main():
             return
         state = seed_state(src, year, today_str)
         save_state(state, args.state)
-        print(f'[holdings] 已播种 {len(state["items"])} 条年内最高价 → {args.state}')
+        print(f'[holdings] 已播种 {len(state["items"])} 条持仓以来最高价 → {args.state}')
         return
 
     if not secret:
