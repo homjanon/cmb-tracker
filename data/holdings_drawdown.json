@@ -5,14 +5,14 @@
       "code": "600036",
       "name": "招商银行",
       "ytd_high_profit_pct": 12.14,
-      "current_drawdown_pct": 5.02,
+      "current_drawdown_pct": 4.95,
       "reminder": ""
     },
     {
       "code": "03968",
       "name": "招商银行H",
       "ytd_high_profit_pct": 43.29,
-      "current_drawdown_pct": 5.0,
+      "current_drawdown_pct": 4.73,
       "reminder": ""
     },
     {
@@ -26,7 +26,7 @@
       "code": "014002",
       "name": "浦银安盛全球智能科技(QDII)C",
       "ytd_high_profit_pct": 50.83,
-      "current_drawdown_pct": 10.36,
+      "current_drawdown_pct": 11.91,
       "reminder": "年内回撤已达10个点"
     },
     {
