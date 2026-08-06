@@ -1,5 +1,36 @@
 {
   "year": 2026,
-  "items": {},
-  "updated_at": "2026-08-06"
+  "items": {
+    "600036": {
+      "ytd_high": 44.534,
+      "ytd_high_date": "2026-08-07",
+      "level": 2
+    },
+    "03968": {
+      "ytd_high": 52.288273000000004,
+      "ytd_high_date": "2026-08-07",
+      "level": 0
+    },
+    "QQQM": {
+      "ytd_high": 307.85799145507815,
+      "ytd_high_date": "2026-08-07",
+      "level": 0
+    },
+    "014002": {
+      "ytd_high": 4.543,
+      "ytd_high_date": "2026-08-07",
+      "level": 4
+    },
+    "050025": {
+      "ytd_high": 5.6384,
+      "ytd_high_date": "2026-08-07",
+      "level": 0
+    },
+    "026096": {
+      "ytd_high": 1.3422,
+      "ytd_high_date": "2026-08-07",
+      "level": 4
+    }
+  },
+  "updated_at": "2026-08-07"
 }
