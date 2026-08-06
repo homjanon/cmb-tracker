@@ -319,17 +319,25 @@ def _nasdaq_ytd_high(code_str, year, today_str):
 
 
 def fund_ytd_high(code_str, year, today_str):
-    """东财 lsjz 取持仓以来最高 NAV（近3年，pageSize=800）。返回 float 或 None。"""
+    """东财 pingzhongdata 取持仓以来最高 NAV（近3年窗口）。返回 float 或 None。
+
+    pingzhongdata 一次返回全部历史净值（无分页限制），比 lsjz（仅最近~20条，
+    会把 QDII 等基金的历史高点漏掉）可靠，2026-08-06 修复。
+    Data_netWorthTrend = [{"x": 毫秒时间戳, "y": 单位净值, ...}, ...]
+    """
     try:
-        url = "https://api.fund.eastmoney.com/f10/lsjz"
-        params = {"fundCode": code_str, "pageIndex": 1, "pageSize": 800}
-        r = SESSION.get(url, params=params,
-                        headers={"Referer": "https://fund.eastmoney.com/"}, timeout=10)
-        if r.status_code == 200:
-            recs = r.json().get("Data", {}).get("LSJZList", [])
-            vals = [float(x["DWJZ"]) for x in recs
-                    if x.get("FSRQ", "") >= f"{year-3}-01-01" and x.get("DWJZ")]
-            return max(vals) if vals else None
+        import re as _re
+        import json as _json
+        import datetime as _dt
+        url = f"https://fund.eastmoney.com/pingzhongdata/{code_str}.js"
+        r = SESSION.get(url, headers={"Referer": "https://fund.eastmoney.com/"}, timeout=15)
+        m = _re.search(r'Data_netWorthTrend\s*=\s*(\[.*?\]);', r.text)
+        if not m:
+            return None
+        arr = _json.loads(m.group(1))
+        cutoff = _dt.datetime(year - 3, 1, 1).timestamp() * 1000
+        vals = [float(p['y']) for p in arr if p.get('x', 0) >= cutoff and p.get('y')]
+        return max(vals) if vals else None
     except Exception as e:
         print(f"[query] 东财净值失败 {code_str}: {e}")
     return None
