@@ -4,44 +4,56 @@
     {
       "code": "600036",
       "name": "招商银行",
-      "ytd_high_profit_pct": 12.14,
-      "current_drawdown_pct": 4.95,
-      "reminder": ""
+      "ytd_high_profit_pct": 21.81,
+      "current_profit_pct": 6.59,
+      "profit_drawdown_pct": 15.22,
+      "current_drawdown_pct": 12.49,
+      "reminder": "盈利回撤70%，考虑止盈"
     },
     {
       "code": "03968",
       "name": "招商银行H",
-      "ytd_high_profit_pct": 43.29,
-      "current_drawdown_pct": 4.73,
-      "reminder": ""
+      "ytd_high_profit_pct": 69.3,
+      "current_profit_pct": 36.51,
+      "profit_drawdown_pct": 32.8,
+      "current_drawdown_pct": 19.37,
+      "reminder": "盈利回撤47%，考虑止盈"
     },
     {
       "code": "QQQM",
       "name": "QQQM",
       "ytd_high_profit_pct": 9.59,
-      "current_drawdown_pct": 4.06,
-      "reminder": ""
+      "current_profit_pct": 5.17,
+      "profit_drawdown_pct": 4.42,
+      "current_drawdown_pct": 4.04,
+      "reminder": "盈利回撤46%，考虑止盈"
     },
     {
       "code": "014002",
       "name": "浦银安盛全球智能科技(QDII)C",
-      "ytd_high_profit_pct": 50.83,
-      "current_drawdown_pct": 11.91,
-      "reminder": "年内回撤已达10个点"
+      "ytd_high_profit_pct": 32.86,
+      "current_profit_pct": 32.86,
+      "profit_drawdown_pct": 0.0,
+      "current_drawdown_pct": 0.0,
+      "reminder": ""
     },
     {
       "code": "050025",
       "name": "博时标普500ETF联接A",
-      "ytd_high_profit_pct": 3.65,
+      "ytd_high_profit_pct": 3.43,
+      "current_profit_pct": 3.43,
+      "profit_drawdown_pct": 0.0,
       "current_drawdown_pct": 0.0,
       "reminder": ""
     },
     {
       "code": "026096",
       "name": "易方达创业板50ETF联接C",
-      "ytd_high_profit_pct": 16.1,
-      "current_drawdown_pct": 11.66,
-      "reminder": "年内回撤已达10个点"
+      "ytd_high_profit_pct": 1.75,
+      "current_profit_pct": 1.75,
+      "profit_drawdown_pct": 0.0,
+      "current_drawdown_pct": 0.0,
+      "reminder": ""
     }
   ]
 }
