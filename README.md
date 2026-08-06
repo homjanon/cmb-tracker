@@ -391,9 +391,9 @@ cmb-tracker/
 
 │   ├── my_holdings_block.py      # 小散持仓回撤提醒表（CSS/HTML/JS，注入 render_html.py）
 
-│   ├── query_stock.py            # 实时价 + 年内最高价（A/港/美/ETF/基金，多源）
+│   ├── query_stock.py            # 实时价 + 近12个月最高价（A/港/美/ETF/基金，多源）
 
-│   ├── holdings_drawdown.py      # 小散持仓回撤计算（读成本Secret/预置 → 动态基准 → 派生表）
+│   ├── holdings_drawdown.py      # 盈利回落四档提醒计算（成本Secret → 近12个月最高 → 派生表）
 
 │   ├── build_my_preview.py       # 本地预览构建（桌面持仓 + mentions.json 合成整页）
 
