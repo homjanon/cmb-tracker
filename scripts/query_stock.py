@@ -175,13 +175,13 @@ def price_of(code, qtype):
 
 
 def stock_ytd_high(code_str, qtype, year, today_str):
-    """A股/港股 腾讯日K(前复权/qfq)取持仓以来最高价（近3年窗口）。返回 float 或 None。
+    """A股/港股 腾讯日K(前复权/qfq)取近12个月最高价。返回 float 或 None。
 
     要点：
       - 用 ,qfq（前复权）后缀：前复权锚定最新日现价，历史最高价按累计分红下修，
         与 qt.gtimg.cn 的实时现价（同锚定最新日）口径一致，盈利/回撤计算才正确。
         （若用不复权/bfq，已拿到的分红会被算回历史高价，导致回撤被高估、双重计入分红）
-      - 窗口：start=近3年（腾讯 fqkline 单次最多约800根），作为「持仓以来」最高播种；
+      - 窗口：start=近12个月（滚动窗口，锚点滑出自动重播，见 holdings_drawdown.compute）。
         播种后跨年不重置、只升不降（见 holdings_drawdown.compute）。
       - day 节点数组格式: [日期, 开, 收, 高, 低, 量, ...] → 高点取 index 3。
       - 美股(us)腾讯 K线不支持，由 us_ytd_high 走 yfinance；本函数仅服务 A股/港股。
@@ -191,7 +191,7 @@ def stock_ytd_high(code_str, qtype, year, today_str):
     else:
         raw = f"{_tencent_prefix(code_str)}{code_str}"
     url = (f"https://web.ifzq.gtimg.cn/appstock/app/fqkline/get"
-           f"?param={raw},day,{year-3}-01-01,{today_str},800,qfq")
+           f"?param={raw},day,{year-1}-01-01,{today_str},320,qfq")
     try:
         r = SESSION.get(url, headers=TENCENT_H, timeout=25)
         d = r.json()
@@ -210,7 +210,7 @@ def stock_ytd_high(code_str, qtype, year, today_str):
 
 
 def _yf_history_with_retry(ticker, year, max_retries=5):
-    """yfinance 拉持仓以来(近5年) 不复权日K + 分红，带限流(429)指数退避重试。
+    """yfinance 拉近12个月 不复权日K + 分红，带限流(429)指数退避重试。
 
     返回 pandas.DataFrame（index=日期，含 High/Dividends 列）；失败抛异常由调用方捕获。
     """
@@ -220,7 +220,7 @@ def _yf_history_with_retry(ticker, year, max_retries=5):
     for attempt in range(max_retries):
         try:
             tk = yf.Ticker(ticker)
-            hist = tk.history(start=f"{year-5}-01-01", auto_adjust=False, actions=True)
+            hist = tk.history(start=f"{year-1}-01-01", auto_adjust=False, actions=True)
             return hist
         except Exception as e:
             last = e
@@ -235,7 +235,7 @@ def _yf_history_with_retry(ticker, year, max_retries=5):
 
 
 def yf_ytd_high(ticker, year, today_str):
-    """yfinance 取美股/港股 持仓以来最高（近5年窗口，纯前复权=剔除分红，与A股口径统一）。
+    """yfinance 取美股/港股 近12个月最高（纯前复权=剔除分红，与A股口径统一）。
 
     纯前复权口径：adjusted_high = raw_high - sum(分红 where ex_date > high_date)
       - 前复权锚定最新日现价，历史价按「高点之后累计分红」下修；
@@ -261,7 +261,7 @@ def yf_ytd_high(ticker, year, today_str):
 
 
 def us_ytd_high(code_str, year, today_str):
-    """美股/ETF 持仓以来最高：优先 yfinance(纯前复权)；失败回退 Nasdaq(不复权)。"""
+    """美股/ETF 近12个月最高：优先 yfinance(纯前复权)；失败回退 Nasdaq(不复权)。"""
     h = yf_ytd_high(code_str, year, today_str)
     if h is not None:
         return h
@@ -269,7 +269,7 @@ def us_ytd_high(code_str, year, today_str):
 
 
 def hk_ytd_high(code_str, year, today_str):
-    """港股 持仓以来最高：优先 yfinance(纯前复权)；失败回退 腾讯 qfq K线。
+    """港股 近12个月最高：优先 yfinance(纯前复权)；失败回退 腾讯 qfq K线。
 
     注意：雅虎港股代码为 4 位无前导零（如 3968.HK），与腾讯的 hk03968
     写法不同，需先剥前导零再补足 4 位，否则 yfinance 报 possibly delisted。
@@ -282,7 +282,7 @@ def hk_ytd_high(code_str, year, today_str):
 
 
 def _nasdaq_ytd_high(code_str, year, today_str):
-    """Nasdaq 历史日K 取持仓以来最高(近3年)，作 yfinance 兜底。返回 float 或 None。
+    """Nasdaq 历史日K 取近12个月最高，作 yfinance 兜底。返回 float 或 None。
 
     Nasdaq historical API 分页(每页~15条)，assetclass 需区分 etf/stocks；
     先试 etf 再试 stocks，合并取最高 high。
@@ -293,9 +293,9 @@ def _nasdaq_ytd_high(code_str, year, today_str):
         for asset in ('etf', 'stocks'):
             hi = []
             off = 0
-            while off < 800:
+            while off < 400:
                 url = (f"https://api.nasdaq.com/api/quote/{code_str}/historical"
-                       f"?assetclass={asset}&fromdate={year-3}-01-01&todate={today_str}&offset={off}")
+                       f"?assetclass={asset}&fromdate={year-1}-01-01&todate={today_str}&offset={off}")
                 r = SESSION.get(url, headers=H, timeout=25)
                 tbl = r.json().get('data', {}).get('tradesTable', {})
                 rows = tbl.get('rows', [])
@@ -319,7 +319,7 @@ def _nasdaq_ytd_high(code_str, year, today_str):
 
 
 def fund_ytd_high(code_str, year, today_str):
-    """东财 pingzhongdata 取持仓以来最高 NAV（近3年窗口）。返回 float 或 None。
+    """东财 pingzhongdata 取近12个月最高 NAV。返回 float 或 None。
 
     pingzhongdata 一次返回全部历史净值（无分页限制），比 lsjz（仅最近~20条，
     会把 QDII 等基金的历史高点漏掉）可靠，2026-08-06 修复。
@@ -335,7 +335,7 @@ def fund_ytd_high(code_str, year, today_str):
         if not m:
             return None
         arr = _json.loads(m.group(1))
-        cutoff = _dt.datetime(year - 3, 1, 1).timestamp() * 1000
+        cutoff = _dt.datetime(year - 1, 1, 1).timestamp() * 1000
         vals = [float(p['y']) for p in arr if p.get('x', 0) >= cutoff and p.get('y')]
         return max(vals) if vals else None
     except Exception as e:
