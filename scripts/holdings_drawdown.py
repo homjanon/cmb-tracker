@@ -40,9 +40,11 @@ def _nominal_level(profit_dd):
 
 
 def _display_level(nominal, cur_profit):
-    """转亏禁减仓：当前盈利<=0 时至少显示「接回」档(2)，不提示减仓。"""
-    if cur_profit is not None and cur_profit <= 0:
-        return max(2, nominal)
+    """转亏禁减仓：本应提示「减仓」(档1) 时若当前盈利≤0，改为「分批接回」(档2)。
+    注意：名义档 0（回落未达任何档，本不提醒）**不得**因转亏被抬升——
+    否则薄盈利标的转亏时会凭空出现「≥15点接回」提醒（020602 bug，2026-08-10 修复）。"""
+    if cur_profit is not None and cur_profit <= 0 and nominal == 1:
+        return 2
     return nominal
 
 TYPE_MAP = {'a-stock': 'a_stock', 'hk-stock': 'hk', 'us-stock': 'us', 'fund': 'fund'}
