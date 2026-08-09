@@ -9,7 +9,7 @@
     "03968": {
       "ytd_high": 52.288273000000004,
       "ytd_high_date": "2026-08-07",
-      "level": 0
+      "level": 1
     },
     "QQQM": {
       "ytd_high": 307.85799145507815,
@@ -30,7 +30,17 @@
       "ytd_high": 1.3422,
       "ytd_high_date": "2026-08-07",
       "level": 4
+    },
+    "020741": {
+      "ytd_high": 1.1782,
+      "ytd_high_date": "2026-08-10",
+      "level": 0
+    },
+    "020602": {
+      "ytd_high": 1.1686,
+      "ytd_high_date": "2026-08-10",
+      "level": 2
     }
   },
-  "updated_at": "2026-08-07"
+  "updated_at": "2026-08-10"
 }
