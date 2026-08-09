@@ -26,11 +26,6 @@
       "ytd_high_date": "2026-08-07",
       "level": 0
     },
-    "026096": {
-      "ytd_high": 1.3422,
-      "ytd_high_date": "2026-08-07",
-      "level": 4
-    },
     "020741": {
       "ytd_high": 1.1782,
       "ytd_high_date": "2026-08-10",
@@ -38,8 +33,7 @@
     },
     "020602": {
       "ytd_high": 1.1686,
-      "ytd_high_date": "2026-08-10",
-      "level": 2
+      "ytd_high_date": "2026-08-10"
     }
   },
   "updated_at": "2026-08-10"
