@@ -1,60 +1,60 @@
 {
-  "updated_at": "2026-08-10",
+  "updated_at": "2026-08-11",
   "items": [
     {
       "code": "600036",
       "name": "招商银行",
       "ytd_high_profit_pct": 21.81,
-      "current_profit_pct": 6.43,
-      "profit_drawdown_pct": 15.38,
+      "current_profit_pct": 6.54,
+      "profit_drawdown_pct": 15.27,
       "reminder": "已回落≥15点，可考虑分批接回"
     },
     {
       "code": "03968",
       "name": "招商银行H",
       "ytd_high_profit_pct": 45.97,
-      "current_profit_pct": 36.79,
-      "profit_drawdown_pct": 9.18,
+      "current_profit_pct": 35.0,
+      "profit_drawdown_pct": 10.97,
       "reminder": "已回落≥10点，可考虑减仓锁利"
     },
     {
       "code": "QQQM",
       "name": "QQQM",
       "ytd_high_profit_pct": 9.59,
-      "current_profit_pct": 5.98,
-      "profit_drawdown_pct": 3.62,
+      "current_profit_pct": 5.67,
+      "profit_drawdown_pct": 3.92,
       "reminder": ""
     },
     {
       "code": "014002",
       "name": "浦银安盛全球智能科技(QDII)C",
       "ytd_high_profit_pct": 79.41,
-      "current_profit_pct": 28.5,
-      "profit_drawdown_pct": 50.91,
+      "current_profit_pct": 27.98,
+      "profit_drawdown_pct": 51.43,
       "reminder": "已回落≥25点，可考虑加倍"
     },
     {
       "code": "050025",
       "name": "博时标普500ETF联接A",
-      "ytd_high_profit_pct": 3.65,
-      "current_profit_pct": 3.26,
-      "profit_drawdown_pct": 0.38,
+      "ytd_high_profit_pct": 3.89,
+      "current_profit_pct": 3.89,
+      "profit_drawdown_pct": 0.0,
       "reminder": ""
     },
     {
       "code": "020741",
       "name": "华泰保兴安悦债券C",
       "ytd_high_profit_pct": 3.71,
-      "current_profit_pct": 3.05,
-      "profit_drawdown_pct": 0.65,
+      "current_profit_pct": 3.39,
+      "profit_drawdown_pct": 0.32,
       "reminder": ""
     },
     {
       "code": "020602",
       "name": "易方达中证红利低波A",
       "ytd_high_profit_pct": 7.88,
-      "current_profit_pct": -2.03,
-      "profit_drawdown_pct": 9.92,
+      "current_profit_pct": -1.61,
+      "profit_drawdown_pct": 9.49,
       "reminder": ""
     }
   ]
