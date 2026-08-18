@@ -5,24 +5,24 @@
       "code": "600036",
       "name": "招商银行",
       "ytd_high_profit_pct": 21.81,
-      "current_profit_pct": 4.65,
-      "profit_drawdown_pct": 17.16,
+      "current_profit_pct": 4.73,
+      "profit_drawdown_pct": 17.08,
       "reminder": "已回落≥15点，可考虑分批接回"
     },
     {
       "code": "03968",
       "name": "招商银行H",
       "ytd_high_profit_pct": 45.97,
-      "current_profit_pct": 33.27,
-      "profit_drawdown_pct": 12.7,
+      "current_profit_pct": 34.11,
+      "profit_drawdown_pct": 11.86,
       "reminder": "已回落≥10点，可考虑减仓锁利"
     },
     {
       "code": "600900",
       "name": "长江电力",
       "ytd_high_profit_pct": 8.54,
-      "current_profit_pct": 3.11,
-      "profit_drawdown_pct": 5.43,
+      "current_profit_pct": 3.22,
+      "profit_drawdown_pct": 5.32,
       "reminder": ""
     },
     {
