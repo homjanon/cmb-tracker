@@ -29,6 +29,14 @@ LEVEL_TEXT = {
     3: '已回落≥20点，可考虑加大买入',
     4: '已回落≥25点，可考虑加倍',
 }
+# 转亏特化文案：当前盈利≤0 时禁用「减仓」，按名义档位显示真实回落幅度
+# （修复 020602：回落仅10点却显示「≥15点接回」——转亏抬档后文案虚报幅度）
+LOSS_TEXT = {
+    1: '已回落≥10点，当前亏损中，暂不减仓锁利',
+    2: '已回落≥15点，当前亏损中，可考虑分批接回',
+    3: '已回落≥20点，当前亏损中，可考虑加大买入',
+    4: '已回落≥25点，当前亏损中，可考虑加倍',
+}
 
 
 def _nominal_level(profit_dd):
@@ -166,13 +174,19 @@ def compute(holdings, state, today=None):
         stored = int(it.get('level', 0))
         reminder = ''
         if profit_dd is not None:
-            disp = _display_level(_nominal_level(profit_dd), cur_profit)
+            nominal = _nominal_level(profit_dd)
+            disp = _display_level(nominal, cur_profit)
             if disp > stored:
                 stored = disp
             elif disp < stored and profit_dd < (LEVEL_TRIGGERS[stored - 1] - HYSTERESIS):
                 stored = disp
             it['level'] = stored
-            reminder = LEVEL_TEXT.get(stored, '')
+            # 文案：转亏时用特化文案（按名义档显示真实幅度，不虚报档位）；
+            # 盈利时用 LEVEL_TEXT（按显示档，含滞回带的粘滞语义）
+            if cur_profit is not None and cur_profit <= 0:
+                reminder = LOSS_TEXT.get(nominal, '')
+            else:
+                reminder = LEVEL_TEXT.get(stored, '')
         derived.append({
             'code': code, 'name': h['name'],
             'ytd_high_profit_pct': round(ytd_profit, 2) if ytd_profit is not None else None,
