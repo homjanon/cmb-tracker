@@ -45,6 +45,11 @@
       "ytd_high": 1.3422,
       "ytd_high_date": "2026-08-18",
       "level": 2
+    },
+    "600900": {
+      "ytd_high": 29.57,
+      "ytd_high_date": "2026-08-18",
+      "level": 0
     }
   },
   "updated_at": "2026-08-18"
