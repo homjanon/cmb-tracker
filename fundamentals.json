@@ -195,7 +195,7 @@
     "research_as_of": "2026-03-31"
   },
   "002142": {
-    "as_of": "2026Q1",
+    "as_of": "2026H1",
     "manual": true,
     "_manual_maintain": [
       "provision_coverage",
@@ -206,15 +206,15 @@
       "retail_focus"
     ],
     "npl": 0.76,
-    "provision_coverage": 400.0,
-    "current_deposit_ratio": 45.0,
-    "retail_deposit_ratio": 30.0,
+    "provision_coverage": 373.35,
+    "current_deposit_ratio": 35.57,
+    "retail_deposit_ratio": 24.96,
     "non_interest_ratio": 27.2,
-    "rorwa": 1.35,
-    "core_tier1": 9.8,
+    "rorwa": 1.32,
+    "core_tier1": 9.53,
     "roe": 14.38,
     "div_payout": 24.2,
-    "retail_focus": 0.7,
+    "retail_focus": 0.6,
     "bvps": 35.205,
     "div_ps": 1.2,
     "eps": 4.96,
