@@ -7,14 +7,14 @@
       "ytd_high_profit_pct": 21.81,
       "current_profit_pct": 8.04,
       "profit_drawdown_pct": 13.77,
-      "reminder": "已回落≥15点，可考虑分批接回"
+      "reminder": "已回落≥10点，可考虑减仓锁利"
     },
     {
       "code": "03968",
       "name": "招商银行H",
       "ytd_high_profit_pct": 45.97,
-      "current_profit_pct": 38.24,
-      "profit_drawdown_pct": 7.73,
+      "current_profit_pct": 37.85,
+      "profit_drawdown_pct": 8.12,
       "reminder": ""
     },
     {
@@ -37,8 +37,8 @@
       "code": "050025",
       "name": "博时标普500A",
       "ytd_high_profit_pct": 4.4,
-      "current_profit_pct": 2.76,
-      "profit_drawdown_pct": 1.64,
+      "current_profit_pct": 2.52,
+      "profit_drawdown_pct": 1.88,
       "reminder": ""
     },
     {
@@ -53,8 +53,8 @@
       "code": "020602",
       "name": "易方达红利低波A",
       "ytd_high_profit_pct": 7.88,
-      "current_profit_pct": 0.34,
-      "profit_drawdown_pct": 7.54,
+      "current_profit_pct": 0.23,
+      "profit_drawdown_pct": 7.65,
       "reminder": ""
     },
     {
