@@ -2,7 +2,15 @@
 
 
 
+
+
+
+
 基于 **招招五维模型** 的选股框架，每日盘后自动抓取招商银行、工商银行、建设银行、农业银行、中国银行、宁波银行的行情与财务数据，计算五维评分、买入信号与买入区间，并发布到 GitHub Pages。
+
+
+
+
 
 
 
@@ -10,33 +18,67 @@
 
 
 
+
+
+
+
 ## 标的范围
+
+
+
+
 
 
 
 | 代码 | 银行 | 备注 | 估值风格 |
 
+
+
 |------|------|------|----------|
+
+
 
 | 600036 | 招商银行 | 零售之王，五维标杆 | 收益型 |
 
+
+
 | 601398 | 工商银行 | 国有大行 | 收益型 |
+
+
 
 | 601939 | 建设银行 | 国有大行 | 收益型 |
 
+
+
 | 601288 | 农业银行 | 县域存款优势 | 收益型 |
 
+
+
 | 601988 | 中国银行 | 海外布局 | 收益型 |
+
+
 
 | 002142 | 宁波银行 | 高 ROE 成长型城商行 | 成长型（PE+ROE） |
 
 
 
+
+
+
+
 - **交通银行**：默认排除（估值陷阱，通常不推荐）。
+
+
 
 - **招商银行 H（03968）**：沙箱/接口稳定性待验证，默认 `INCLUDE_H=False`。数据源稳定后可置 `True` 纳入（`scripts/bank_universe.py`）。
 
+
+
 - **估值风格差异**：招行/四大行为「收益型」银行（高分红、低估值），买入信号基于 PB 破净 + 股息率；宁波银行为「成长型」银行（高 ROE、低分红率），买入信号基于 PE + ROE，避免低股息率误判为"持有"。
+
+
+
+
 
 
 
@@ -44,19 +86,39 @@
 
 
 
+
+
+
+
 每维 0–20 分，总分 0–100：
+
+
+
+
 
 
 
 1. **资产质量**：不良率↓、拨备覆盖率↑
 
+
+
 2. **负债结构**：活期占比↑、零售存款占比↑
+
+
 
 3. **中间业务**：非息收入占比↑
 
+
+
 4. **资本实力**：RORWA↑、核心一级资本充足率↑
 
+
+
 5. **管理层**：ROE、分红率连续性、零售护城河（代理指标）
+
+
+
+
 
 
 
@@ -64,7 +126,15 @@
 
 
 
+
+
+
+
 ## 雪球大V 标的提及追踪表（雪球大V板块）
+
+
+
+
 
 
 
@@ -72,13 +142,27 @@
 
 
 
+
+
+
+
 **表格内容（全自动，不判断买卖方向）**
+
+
 
 - **账户栏（每人）**：上方「仓位」+ 下方「盈亏」，各带命中时间与是否来自自引段（引述）标记。例：紫金陈「仓位 买到55%的仓位（引述）/ 盈亏 今年收益率已经跑过上证」；谷子地「仓位 满融 / 盈亏 截止7月31日收盘，股市比年初亏0.03%」。
 
+
+
 - **标的行**：标的名称、最近点名时间（按时间倒序）、距今天数、原文摘录、数量。同一标的再次被点名则覆盖主行，「次数」可展开历史（保留最近 3 条）。超过 60 天未再提及的整行置灰。
 
+
+
 - 标名后带 `?` 表示该别名未收录进别名词典，可能与其他叫法重复计数。
+
+
+
+
 
 
 
@@ -86,7 +170,15 @@
 
 
 
+
+
+
+
 ## 小散持仓回撤提醒表（持仓回撤板块）
+
+
+
+
 
 
 
@@ -94,73 +186,148 @@
 
 
 
+
+
+
+
 **表格内容（6 列）**
+
+
 
 | 列 | 含义 |
 
+
+
 |----|------|
+
+
 
 | 标的 / 代码 | 持仓标的名称与代码 |
 
+
+
 | 最高盈利 | `(近12个月前复权最高价 − 下修后成本) / 下修后成本`（需填成本；未填显示 —） |
+
+
 
 | 当前盈利 | `(当前价 − 下修后成本) / 下修后成本` |
 
+
+
 | 盈利回落 | 最高盈利 − 当前盈利（百分点；≥10橙 ≥20红） |
+
+
 
 | 提醒 | 按回落幅度四档：≥10点减仓锁利 / ≥15点分批接回 / ≥20点加大买入 / ≥25点加倍；当前盈利≤0 只提示买入类（**转亏文案按实际回落幅度显示**，2026-08-18 修复：回落仅10点不再虚报"≥15点接回"） |
 
-| 提醒（续） | 滞回带防边界闪烁；基准近12个月滚动、跨年不重置 |
+
+
+| 提醒（续） | 滞回带防边界闪烁；**文案按本次实际回落名义档**（2026-08-25 修复，不再被 state 旧档绑架）；基准近12个月滚动、跨年不重置 |
+
+
+
+
 
 
 
 **动态基准（核心）**
 
+
+
 - 近12个月最高价 `ytd_high`（前复权）：首跑/新增标的用近12个月历史最高**播种**（A股：腾讯 qfq；港股/美股：yfinance 剔除分红；基金：东财 pingzhongdata 全量净值）；之后每日破新高则**上移**；锚点距今>365天自动重播（滚动窗口）。
+
+
 
 - **跨年不重置**（2026-08-06 用户决策）：滚动12个月窗口连续跨年，避免 1 月开年即跌时信号失效。
 
+
+
 - **提醒规则**（回落幅度四档）：≥10点「可考虑减仓锁利」/ ≥15点「分批接回」/ ≥20点「加大买入」/ ≥25点「加倍」；**当前盈利≤0 时不提示减仓**（只提示买入类）；**滞回带**：触发后需回落收窄2点才降档，防边界闪烁。
+
 - **转亏文案特化**（2026-08-18）：当前盈利≤0 时，文案按**名义档位**显示真实回落幅度（如「已回落≥10点，当前亏损中，暂不减仓锁利」），不再因「转亏禁减仓」抬档而虚报更高档位的幅度（修复 020602 回落10点却提示"≥15点接回"的误导）。
+- **文案=本次实际回落档（2026-08-25 修复）**：提醒文案一律按**本次实际回落幅度**的名义档位显示（盈利用 LEVEL_TEXT、转亏用 LOSS_TEXT），**不再被 state.level 旧档绑架**。此前滞回带"只升不降 + 降档需跌破阈值−2"把曾触发过高档的标的粘在旧档（招行 600036 回落 13.77pp 却显示"≥15点接回"，应为"≥10点减仓锁利"），现已修正为：**文案永远反映真实回落**，state.level 仅作边界防抖存档、不决定文案。
+
+
 
 - 价格口径统一用**前复权（纯剔除分红）**，与A股一致：实时价锚定最新日（前复权最新日=现价），历史最高按「高点之后累计分红」下修，两者口径一致，回撤才不会被**双重计入分红**。示例：招商银行A 43.02-2.02→41.00、招商银行H 53.60-2.27→51.33、QQQM 308.21-0.35→307.86。
 
 
 
+
+
+
+
 **隐私设计**
+
+
 
 - 仓库只提交**派生指标**（回撤%、盈利%、提醒），**成本与市值永不进公开仓库**。
 
+
+
 - 成本来自 GitHub Secret `HOLDINGS_JSON`（格式 `[{"code","name","type","cost"}]`，`type` 取 `a_stock`/`hk`/`us`/`fund`），由每日 workflow 在运行时注入。
 
+
+
 **成本 = 下修后成本（手动维护，2026-08-06 用户拍板）**：盈利%用「前复权价 − 下修后成本」计算，与历史价扣除分红的口径一致。分红后成本会自然降低，请你在**分红除息日**把 Secret 里的 `cost` 更新为下修后数值（如 36.56 → 34.54），否则盈利会被低估。示例：
+
 ```json
+
 [{"code":"600036","name":"招商银行","type":"a_stock","cost":34.54}]
+
 ```
+
 - 未设 Secret 时回退到仓库内 `data/holdings_preset.json`（仅 code/name/type，无成本）→ 回撤表立即可见，盈利列显示 —，待你填成本后自动补全。
+
+
+
+
 
 
 
 **数据源（近12个月最高价播种 / 每日实时价）**
 
+
+
 - A股/港股/ETF/美股：腾讯 `qt.gtimg.cn`（实时价，锚定最新日）
+
+
 
 - 场外基金：天天基金 / 东方财富净值
 
+
+
 - 港股/美股播种：yfinance 近12个月 不复权日K + 手动剔除分红（纯前复权，与A股一致）；港股代码自动转雅虎4位格式（03968→3968.HK）
+
 - 播种兜底：美股→Nasdaq 历史接口（不复权）；港股→腾讯 qfq 日K；基金→天天基金/东财 pingzhongdata（NAV 本身已除权，无需再调整）
+
+
 
 - 相关脚本：`scripts/query_stock.py`（价格/近12个月最高）、`scripts/holdings_drawdown.py`（计算+状态）、`scripts/my_holdings_block.py`（注入 render_html.py 的 CSS/HTML/JS）
 
 
 
+
+
+
+
 **本地预填近12个月最高价（可选，借本地通达信/网络源一次性播种）**
+
+
 
 ```bash
 
+
+
 python -m scripts.holdings_drawdown --seed-only --preset data/holdings_preset.json
 
+
+
 ```
+
+
+
+
 
 
 
@@ -168,49 +335,99 @@ python -m scripts.holdings_drawdown --seed-only --preset data/holdings_preset.js
 
 
 
+
+
+
+
 银行的五维财务字段中，质量字段（不良率/拨备/资本充足率/存款结构/RORWA）是**季度**数据、每日不变；而现价/PE/PB/股息率与部分财务字段是**每日**变化。因此采用「底表为真源 + 每日轻量刷新」的稳健设计：
+
+
+
+
 
 
 
 - **行情（每日）**：腾讯 `qt.gtimg.cn`（主）→ 新浪 `hq.sinajs.cn`（备）→ akshare `stock_zh_a_spot_em`（兜底）。**价格与 PE/PB 均取自腾讯实时**：`parts[3]`=现价、`parts[39]`=市盈率(TTM)、`parts[46]`=市净率(PB)；腾讯缺失时 PE/PB 退 baostock `peTTM/pbMRQ`，再退 现价÷BVPS。这一多源容错链复用自「每日财经早报」项目。
 
+
+
 - **财务底表（真源）**：`fundamentals.json` 保存各银行五维原始输入与每日刷新结果。
+
+
 
   - `scripts/fetch_fundamentals.py → refresh_light()`：**每日**用 akshare `stock_yjbb_em` 刷新每股净资产(BVPS)/ROE/**EPS（均按报告期年化）**，保证 PB 与派息率口径精确。
 
+
+
   - `refresh_nii()`：非息收入占比 —— **兜底**：仅当东财 `REVENUE_RATIO` 缺失且设 `BIYING_API_KEY` 时，用必盈利润表 API 推算；否则保持东财自动值或手工值。
+
+
 
   - `refresh_div()`：每股分红 `div_ps` —— **自动**，每日用 akshare `stock_history_dividend_detail` 按股权登记日倒序取最新 2 次「已实施」派息（元/10 股）求和÷10，等于最近一个完整年度（本组合均为半年派，规避滚动 365 天窗口跨年抓到 3 次导致股息率/派息率虚高）。
 
+
+
   - 派息率 `div_payout`：**自动**，由 `div_ps ÷ 年化EPS` 计算（不再手工维护）。
+
+
 
   - `refresh_deep()`：**已启用并扩展**，每日用 akshare `stock_financial_analysis_indicator_em`（`按报告期` 取最新一期）自动刷新银行专属指标，写回底表：
 
+
+
      · `net_interest_margin` / `net_interest_spread` —— 净息差 NIM / 价差（可靠）
+
+
 
      · `npl` —— 不良贷款率(%)，多行实测与披露吻合（招行 0.94 / 宁波 0.76 / 工行 1.31 / 建行 1.31）
 
+
+
      · `capital_adequacy` —— 资本充足率(总)(%)，部分行 EM 返回 nan 则保留底表值
+
+
 
      · `tier1_adequacy` —— 一级资本充足率(%)，底表参考（评分仍用核心一级 `core_tier1`）
 
+
+
      · `provision_ratio` —— 拨贷比(%)，**非**拨备覆盖率
+
+
 
      · `non_interest_ratio` —— 非息收入占比(%)，**自动主源**：6 行实测 21~29%（招行 28.47 / 工行 21.18 / 宁波 25.71），与披露吻合；**替代必盈成为非息占比的自动主源**（无需 key），必盈仅作缺失兜底
 
+
+
      所有字段含 NaN 守卫（NaN != NaN），EM 返回 nan 时跳过、保留底表手工值（不回退、不报错）。其中 `npl`/`non_interest_ratio` 进五维评分（`npl`→资产质量维、`non_interest_ratio`→中间业务维）；`tier1_adequacy`/`capital_adequacy`/`provision_ratio` 目前仅写回底表参考，五维评分仍用人工维护的 `core_tier1`(核心一级) 与 `provision_coverage`(拨备覆盖率)。注：拨备覆盖率(`provision_coverage`)/核心一级(`core_tier1`)/杠杆率/存款结构/RORWA 在 EM 无对应字段，仍按季度手工维护。
+
+
 
   - `refresh_research()`：**每日**用 akshare `stock_research_report_em` 自动抓取分析师研报评级（东财评级 + 近一月研报数 + 最新机构），写回底表并在网页新增「分析师研报评级」面板展示。**仅作展示，不进入五维评分（评分体系已固化）**。
 
+
+
   - `refresh_target_price()` 已移除（2026-07-15）：巨潮 `stock_rank_forecast_cninfo` 每日回探 25 个交易日数据量大、大部分时间不更新，按用户要求删除。
+
+
 
   - 北向资金个股持股：原计划接入 `stock_hsgt_individual_em`，但实测该接口数据止于 **2024-08-16**，且 2024-08-19 起沪深港通暂停北向披露（聚合北向 `资金净流入` 亦归零），免费源已无当前北向数据 → **本阶段不接入**，留待付费源（必盈/Wind/Choice）或仅用南向。
 
+
+
 - **为什么不全自动**：akshare 旧版 `stock_financial_analysis_indicator`（非 `_em`）已失效，利润表/资产负债表原始科目列名漂移，港股接口在沙箱不稳定。但东财 `_em` 版 `stock_financial_analysis_indicator_em` 实测可用，已接入**不良率 / 资本充足率(总) / 一级资本充足率 / 拨贷比 / 非息收入占比(REVENUE_RATIO)** 5 个字段的自动刷新；剩余仍人工季度更新的字段：**拨备覆盖率 / 核心一级资本充足率 / 存款结构 / RORWA / 零售护城河**。BVPS/ROE/EPS/div_ps/非息占比/净息差(NIM) 已实现自动刷新，必盈 API 仅作非息占比缺失兜底。
 
+
+
 - **手工字段更新记录（按报告期逐家更新，2026-08-22 起）**：新报告期披露后，对照「招招投资风格」skill 的量化标准（拨备>300%/核心一级>11%/活期>50%/零售>40%/RORWA>1.5%，仅零售护城河为主观 0-1 评分），按官方披露更新 `fundamentals.json` 对应银行的 `as_of` + 5 个手工字段，触发 CI 验证评分变化。
+
   - **宁波银行（002142）**：2026-08-20 披露中报 → 2026-08-22 已更新至 **2026H1**（拨备覆盖率 373.35 / 核心一级 9.53 / 活期占比 35.57 / 零售存款占比 24.96 / RORWA 1.32 / 零售护城河 0.6）。评分 58.9→52.2（负债结构维真实化），买入信号仍 BUY（growth 型 PE+ROE，评分统一阈值、估值分型，互不影响）。数据来源：半年报（巨潮 CNINFO PDF）+ 资本充足率（官网第三支柱报告）。
+
   - 其余 5 家（招商/工商/建设/农业/中国银行）：中报 2026-08-29 集中披露，届时按同流程更新。
+
+
+
+
 
 
 
@@ -218,15 +435,31 @@ python -m scripts.holdings_drawdown --seed-only --preset data/holdings_preset.js
 
 
 
+
+
+
+
 ```bash
+
+
 
 pip install -r requirements.txt
 
+
+
 cd scripts
+
+
 
 python run_daily.py
 
+
+
 ```
+
+
+
+
 
 
 
@@ -234,19 +467,39 @@ python run_daily.py
 
 
 
+
+
+
+
 产出：
+
+
 
 - `fundamentals.json` — 财务底表（每日刷新 BVPS/ROE/EPS/div_ps/非息占比(东财REVENUE_RATIO)/净息差/不良率 后写回）
 
+
+
 - `history.jsonl` — 每日评分历史（按日期去重累积）
+
+
 
 - `docs/index.html` — 仪表盘（表格 + 五维雷达 + 各维条形 + 雪球大V追踪表 + 小散持仓回撤表）
 
+
+
 - `docs/history.html` — 历史趋势（总分 / PB）
+
+
 
 - `data/holdings_drawdown.json` — 当日派生回撤表（注入仪表盘；无成本/市值，仅回撤%与盈利%）
 
+
+
 - `output/cmb_report.json` — 机器可读报告（外部可直接 fetch，详见下文「JSON 产出」）
+
+
+
+
 
 
 
@@ -254,11 +507,23 @@ python run_daily.py
 
 
 
+
+
+
+
 - 触发：`cron "10 7 * * 1-5"`（**UTC 07:10 = 北京时间 15:10**）+ 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。GitHub Actions 约 1h 排队延迟，实跑约 **北京时间 16:10 后**。
+
+
 
 - 流程：checkout → 装依赖 → 交易日判断 → `run_daily.py`（设 `BIYING_API_KEY`）→ `holdings_drawdown.py`（设 `HOLDINGS_JSON` 可选，无则回退预置清单）→ 自动 commit `fundamentals.json`/`history.jsonl`/`docs/`/`output/`/`data/holdings_drawdown_state.json`/`data/holdings_drawdown.json`/`data/holdings_preset.json`
 
+
+
 - Pages：仓库 Settings → Pages → Source 选 `main` 分支 `/docs` 目录
+
+
+
+
 
 
 
@@ -266,7 +531,15 @@ python run_daily.py
 
 
 
+
+
+
+
 ## JSON 产出（output/cmb_report.json）
+
+
+
+
 
 
 
@@ -274,11 +547,23 @@ python run_daily.py
 
 
 
+
+
+
+
 ```
+
+
 
 https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.json
 
+
+
 ```
+
+
+
+
 
 
 
@@ -286,47 +571,95 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 
 
 
+
+
+
+
 ```json
+
+
 
 {
 
+
+
   "tracker": "cmb-tracker",
+
+
 
   "model": "招招五维模型",
 
+
+
   "generated_at": "2026-07-13T00:10:00+08:00",
+
+
 
   "data_date": "2026-07-13",
 
+
+
   "summary": { "total_banks": 6, "strong_buy": 0, "buy": 0, "hold": 6, "reduce": 0 },
+
+
 
   "banks": [
 
+
+
     {
+
+
 
       "code": "600036", "name": "招商银行", "as_of": "2026Q1",
 
+
+
       "price": 43.5, "pe": 7.3, "pb": 0.97, "div_yield": 4.6,
+
+
 
       "score_total": 82.5,
 
+
+
       "score_dims": { "asset_quality": 18, "liability": 16, "intermediary": 15, "capital": 14, "management": 19.5 },
+
+
 
       "signal": "HOLD", "signal_cn": "持有",
 
+
+
       "valuation_style": "yield",
+
+
 
       "zone_low": 31.44, "zone_high": 40.43,
 
+
+
       "reason": "PB 0.97 高于破净线，股息率 4.6% ..."
+
+
 
     }
 
+
+
   ]
+
+
 
 }
 
+
+
 ```
+
+
+
+
 
 
 
@@ -334,7 +667,15 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 
 
 
+
+
+
+
 ## 维护财务报表
+
+
+
+
 
 
 
@@ -342,29 +683,59 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 
 
 
+
+
+
+
 | 自动化 | 字段 | 来源 |
+
+
 
 |--------|------|------|
 
+
+
 | 自动 | BVPS / ROE / EPS(年化) / div_ps(每股分红) | akshare（`refresh_light` / `refresh_div`） |
+
+
 
 | 自动 | 不良率(npl) / 资本充足率(总)(capital_adequacy) / 一级资本充足率(tier1_adequacy) / 拨贷比(provision_ratio) / 非息收入占比(non_interest_ratio) | 东财 `refresh_deep`（NaN 守卫：EM 返回 nan 则保留底表值） |
 
+
+
 | 兜底 | 非息收入占比 | 必盈利润表 API（`refresh_nii`，仅当东财 `REVENUE_RATIO` 缺失且设 `BIYING_API_KEY` 时启用） |
+
+
 
 | 展示 | 分析师研报评级（东财评级/近一月研报数/最新机构） | 东财 `refresh_research`（**不进五维评分**） |
 
+
+
 | 已移除 | 目标价(巨潮)（2026-07-15：数据量大且不常更新，按用户要求删除） | — |
+
+
 
 | 手工 | 拨备覆盖率 / 核心一级资本充足率 / 存款结构 / RORWA / 零售护城河 | 季度人工更新 `fundamentals.json` |
 
 
 
+
+
+
+
 - **手工字段随季报更新**：直接编辑 `fundamentals.json` 对应字段，并改 `as_of`（如 `2026Q1`）。这些字段在 `_manual_maintain` 列表中标记、`refresh_deep` 不返回故不被覆盖（拨备覆盖率/核心一级/存款结构/RORWA/零售护城河）；`npl` 已改为自动，已从 `_manual_maintain` 移除。
+
+
 
 - **派息率 `div_payout`** 由 `div_ps ÷ 年化EPS` 自动算出，已从 `_manual_maintain` 移除，无需手工填。
 
+
+
 - 运行 `python calibration.py` 可查看当前评分与缺失字段。
+
+
+
+
 
 
 
@@ -372,77 +743,155 @@ https://raw.githubusercontent.com/homjanon/cmb-tracker/main/output/cmb_report.js
 
 
 
+
+
+
+
 ```
+
+
 
 cmb-tracker/
 
+
+
 ├── .github/workflows/daily.yml   # 每日自动化（交易日 15:10 触发 · 实跑约 16:10 北京时间）
+
+
 
 ├── _api_sync.py                  # GitHub Contents API 推送（替代被墙的 git push）
 
+
+
 ├── scripts/
+
+
 
 │   ├── bank_universe.py          # 标的清单
 
+
+
 │   ├── fetch_quotes.py           # 行情（腾讯/新浪/akshare）
+
+
 
 │   ├── fetch_fundamentals.py     # 财务底表刷新（light/nii/div/research 多路）
 
+
+
 │   ├── zhaozhao_five_dim.py      # 五维评分引擎（纯计算）
+
+
 
 │   ├── render_html.py            # HTML 渲染（仪表盘/历史，注入雪球大V 追踪表 + 小散持仓回撤表）
 
+
+
 │   ├── xq_table_block.py         # 雪球大V 标的提及追踪表（CSS/HTML/JS，注入 render_html.py）
+
+
 
 │   ├── my_holdings_block.py      # 小散持仓回撤提醒表（CSS/HTML/JS，注入 render_html.py）
 
+
+
 │   ├── query_stock.py            # 实时价 + 近12个月最高价（A/港/美/ETF/基金，多源）
+
+
 
 │   ├── holdings_drawdown.py      # 盈利回落四档提醒计算（成本Secret → 近12个月最高 → 派生表）
 
+
+
 │   ├── build_my_preview.py       # 本地预览构建（桌面持仓 + mentions.json 合成整页）
+
+
 
 │   ├── render_report.py          # JSON 产出（output/cmb_report.json）
 
+
+
 │   ├── run_daily.py              # 每日编排器（含注入回撤表）
+
+
 
 │   ├── calibration.py            # 校准/缺失检查
 
+
+
 │   └── retry_utils.py            # 重试/多源容错
+
+
 
 ├── fundamentals.json             # 财务底表（真源 + 每日刷新结果）
 
+
+
 ├── history.jsonl                 # 每日历史
+
+
 
 ├── data/
 
+
+
 │   ├── holdings_preset.json      # 预置标的清单（无成本，无 Secret 时驱动回撤表）
+
+
 
 │   ├── holdings_drawdown_state.json  # 近12个月最高价动态基准状态（滚动窗口、跨年不重置、提交）
 
+
+
 │   └── holdings_drawdown.json    # 当日派生回撤表（注入仪表盘）
+
+
 
 ├── output/
 
+
+
 │   └── cmb_report.json           # 机器可读报告
+
+
 
 ├── docs/                         # GitHub Pages 产物
 
+
+
 │   ├── index.html
+
+
 
 │   ├── history.html
 
+
+
 │   ├── scoring.md                # 评分阈值说明
+
+
 
 │   └── vendor/chart.umd.min.js   # 本地内置 Chart.js（离线渲染图表）
 
+
+
 └── requirements.txt
 
+
+
 ```
+
+
+
+
 
 
 
 ---
 
+
+
 *以招招五维框架构建，仅供个人研究。*
+
+
 
