@@ -1,36 +1,36 @@
 {
-  "updated_at": "2026-08-25",
+  "updated_at": "2026-08-26",
   "items": [
     {
       "code": "600036",
       "name": "招商银行",
       "ytd_high_profit_pct": 21.81,
-      "current_profit_pct": 8.04,
-      "profit_drawdown_pct": 13.77,
+      "current_profit_pct": 8.86,
+      "profit_drawdown_pct": 12.95,
       "reminder": "已回落≥10点，可考虑减仓锁利"
     },
     {
       "code": "03968",
       "name": "招商银行H",
       "ytd_high_profit_pct": 45.97,
-      "current_profit_pct": 37.85,
-      "profit_drawdown_pct": 8.12,
+      "current_profit_pct": 38.57,
+      "profit_drawdown_pct": 7.39,
       "reminder": ""
     },
     {
       "code": "600900",
       "name": "长江电力",
       "ytd_high_profit_pct": 8.54,
-      "current_profit_pct": 3.55,
-      "profit_drawdown_pct": 4.99,
+      "current_profit_pct": 3.66,
+      "profit_drawdown_pct": 4.88,
       "reminder": ""
     },
     {
       "code": "QQQM",
       "name": "Invesco纳指100ETF",
       "ytd_high_profit_pct": 9.59,
-      "current_profit_pct": 3.52,
-      "profit_drawdown_pct": 6.07,
+      "current_profit_pct": 4.18,
+      "profit_drawdown_pct": 5.41,
       "reminder": ""
     },
     {
@@ -45,8 +45,8 @@
       "code": "020741",
       "name": "华泰保兴安悦债券C",
       "ytd_high_profit_pct": 3.71,
-      "current_profit_pct": 3.47,
-      "profit_drawdown_pct": 0.24,
+      "current_profit_pct": 3.42,
+      "profit_drawdown_pct": 0.29,
       "reminder": ""
     },
     {
@@ -61,16 +61,16 @@
       "code": "021277",
       "name": "广发全球精选C",
       "ytd_high_profit_pct": 17.93,
-      "current_profit_pct": -2.85,
-      "profit_drawdown_pct": 20.78,
+      "current_profit_pct": -4.93,
+      "profit_drawdown_pct": 22.86,
       "reminder": "已回落≥20点，当前亏损中，可考虑加大买入"
     },
     {
       "code": "026096",
       "name": "易方达创业板50C",
       "ytd_high_profit_pct": 27.02,
-      "current_profit_pct": -0.9,
-      "profit_drawdown_pct": 27.92,
+      "current_profit_pct": -2.04,
+      "profit_drawdown_pct": 29.06,
       "reminder": "已回落≥25点，当前亏损中，可考虑加倍"
     }
   ]
