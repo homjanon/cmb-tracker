@@ -1,6 +1,6 @@
 {
   "600036": {
-    "as_of": "2026Q1",
+    "as_of": "2026H1",
     "manual": true,
     "_manual_maintain": [
       "provision_coverage",
@@ -11,12 +11,12 @@
       "retail_focus"
     ],
     "npl": 0.94,
-    "provision_coverage": 437.0,
-    "current_deposit_ratio": 52.0,
-    "retail_deposit_ratio": 58.0,
+    "provision_coverage": 385.1,
+    "current_deposit_ratio": 49.6,
+    "retail_deposit_ratio": 45.72,
     "non_interest_ratio": 29.7,
-    "rorwa": 2.4,
-    "core_tier1": 10.68,
+    "rorwa": 1.93,
+    "core_tier1": 14.07,
     "roe": 13.48,
     "div_payout": 33.8,
     "retail_focus": 1.0,
@@ -44,7 +44,7 @@
     "research_target_as_of": "2026-06-17"
   },
   "601398": {
-    "as_of": "2026Q1",
+    "as_of": "2026H1",
     "manual": true,
     "_manual_maintain": [
       "provision_coverage",
@@ -55,15 +55,15 @@
       "retail_focus"
     ],
     "npl": 1.29,
-    "provision_coverage": 213.0,
-    "current_deposit_ratio": 48.0,
-    "retail_deposit_ratio": 32.0,
+    "provision_coverage": 217.58,
+    "current_deposit_ratio": 37.5,
+    "retail_deposit_ratio": 53.7,
     "non_interest_ratio": 22.7,
-    "rorwa": 1.45,
-    "core_tier1": 13.55,
+    "rorwa": 1.16,
+    "core_tier1": 13.21,
     "roe": 8.83,
     "div_payout": 32.3,
-    "retail_focus": 0.4,
+    "retail_focus": 0.5,
     "bvps": 11.062,
     "div_ps": 0.31,
     "eps": 0.96,
@@ -85,7 +85,7 @@
     "provision_ratio": 2.8
   },
   "601939": {
-    "as_of": "2026Q1",
+    "as_of": "2026H1",
     "manual": true,
     "_manual_maintain": [
       "provision_coverage",
@@ -96,15 +96,15 @@
       "retail_focus"
     ],
     "npl": 1.29,
-    "provision_coverage": 240.0,
-    "current_deposit_ratio": 45.0,
-    "retail_deposit_ratio": 28.0,
+    "provision_coverage": 238.69,
+    "current_deposit_ratio": 40.3,
+    "retail_deposit_ratio": 59.5,
     "non_interest_ratio": 22.0,
-    "rorwa": 1.42,
-    "core_tier1": 13.87,
+    "rorwa": 1.35,
+    "core_tier1": 14.24,
     "roe": 9.85,
     "div_payout": 29.5,
-    "retail_focus": 0.4,
+    "retail_focus": 0.5,
     "bvps": 13.56,
     "div_ps": 0.389,
     "eps": 1.32,
@@ -123,7 +123,7 @@
     "net_interest_spread": 1.26
   },
   "601288": {
-    "as_of": "2026Q1",
+    "as_of": "2026H1",
     "manual": true,
     "_manual_maintain": [
       "provision_coverage",
@@ -134,15 +134,15 @@
       "retail_focus"
     ],
     "npl": 1.25,
-    "provision_coverage": 305.0,
-    "current_deposit_ratio": 55.0,
-    "retail_deposit_ratio": 42.0,
+    "provision_coverage": 290.1,
+    "current_deposit_ratio": 38.6,
+    "retail_deposit_ratio": 64.4,
     "non_interest_ratio": 26.3,
-    "rorwa": 1.38,
-    "core_tier1": 11.28,
+    "rorwa": 1.11,
+    "core_tier1": 10.8,
     "roe": 10.59,
     "div_payout": 31.1,
-    "retail_focus": 0.6,
+    "retail_focus": 0.7,
     "bvps": 8.076,
     "div_ps": 0.249,
     "eps": 0.8,
@@ -164,7 +164,7 @@
     "provision_ratio": 3.63
   },
   "601988": {
-    "as_of": "2026Q1",
+    "as_of": "2026H1",
     "manual": true,
     "_manual_maintain": [
       "provision_coverage",
@@ -175,12 +175,12 @@
       "retail_focus"
     ],
     "npl": 1.22,
-    "provision_coverage": 215.0,
-    "current_deposit_ratio": 40.0,
-    "retail_deposit_ratio": 20.0,
+    "provision_coverage": 200.85,
+    "current_deposit_ratio": 37.0,
+    "retail_deposit_ratio": 52.1,
     "non_interest_ratio": 23.4,
-    "rorwa": 1.28,
-    "core_tier1": 10.43,
+    "rorwa": 1.11,
+    "core_tier1": 12.04,
     "roe": 8.46,
     "div_payout": 31.4,
     "retail_focus": 0.3,
