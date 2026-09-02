@@ -511,7 +511,7 @@ python run_daily.py
 
 
 
-- 触发：`cron "10 7 * * 1-5"`（**UTC 07:10 = 北京时间 15:10**）+ 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。GitHub Actions 约 1h 排队延迟，实跑约 **北京时间 16:10 后**。
+- 触发：**每天北京时间 16:30** 由 Cloudflare Worker qdii-dispatch（心跳每 5 分钟）workflow_dispatch 触发 + 交易日历精确排除节假日/休市 + 手动 `workflow_dispatch`。16:30 触发时 A股已收盘、数据完整。
 
 
 
@@ -755,7 +755,7 @@ cmb-tracker/
 
 
 
-├── .github/workflows/daily.yml   # 每日自动化（交易日 15:10 触发 · 实跑约 16:10 北京时间）
+├── .github/workflows/daily.yml   # 由 Cloudflare qdii-dispatch 触发（每天 16:30 · 无 schedule）
 
 
 
