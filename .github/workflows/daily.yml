@@ -13,8 +13,7 @@ name: 招招五维·五大行每日追踪
 #   任意时间（含周末/非交易日）强制运行当前脚本。
 # =====================================================================
 on:
-  schedule:
-    - cron: "10 7 * * 1-5"
+  # 单通道（2026-09-02 起）：由 Cloudflare Worker qdii-dispatch 每天 16:30（北京时间）触发 workflow_dispatch（原 GitHub schedule 已移除，非交易日由下方 check 门控跳过）
   workflow_dispatch:
 
 permissions:
