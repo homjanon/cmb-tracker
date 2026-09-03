@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """行情查询：A/港/美股/ETF + 公募基金（适配自 homjanon/douban-tracker/query_stock.py）。
 
 数据源（极简直查）：
@@ -7,10 +8,11 @@
 
 本文件对外只暴露两个函数：
   - price_of(code, qtype) -> float | None   （qtype: a_stock / hk / us / fund）
-  - 供 holdings_drawdown.seed_ytd_high 复用内部 _fetch_* 拉取年内最高价
+  - 供 holdings_drawdown.seed_ytd_high 复用内部 _fetch_* 拉取近12个月最高价
 持仓表按 user-data.json 的 type 直接路由，不靠代码前缀猜，避开 00 开头基金误判。
 """
 import re
+import datetime
 import requests
 
 SESSION = requests.Session()
@@ -175,14 +177,21 @@ def price_of(code, qtype):
 
 
 def stock_ytd_high(code_str, qtype, year, today_str):
-    """A股/港股 腾讯日K(前复权/qfq)取近12个月最高价。返回 float 或 None。
+    """A股/港股 腾讯日K(前复权/qfq)取近12个月最高价。
+
+    返回 (high, high_date) 或 None：
+      - high: float 近12个月前复权最高价
+      - high_date: 高点实际发生日 'YYYY-MM-DD'（2026-09-03 修复：此前播种把
+        播种当天当高点日期，锚点虽旧、日期却是新的，导致「锚点滑出窗口→重播」
+        永远不触发，旧高点粘滞、盈利回落虚高，如招行 2025-07-10 的 44.534
+        粘到 2026-09 仍作基准，回落虚报 9.47pp——实际真·近12个月回落约 1.9pp）
 
     要点：
       - 用 ,qfq（前复权）后缀：前复权锚定最新日现价，历史最高价按累计分红下修，
         与 qt.gtimg.cn 的实时现价（同锚定最新日）口径一致，盈利/回撤计算才正确。
         （若用不复权/bfq，已拿到的分红会被算回历史高价，导致回撤被高估、双重计入分红）
-      - 窗口：start=近12个月（滚动窗口，锚点滑出自动重播，见 holdings_drawdown.compute）。
-        播种后跨年不重置、只升不降（见 holdings_drawdown.compute）。
+      - 窗口：start=今天-365天（真·滚动12个月；2026-09-03 修复：原 year-1-01-01
+        跨度约 20 个月，会把窗口外的旧高点捞进来）。
       - day 节点数组格式: [日期, 开, 收, 高, 低, 量, ...] → 高点取 index 3。
       - 美股(us)腾讯 K线不支持，由 us_ytd_high 走 yfinance；本函数仅服务 A股/港股。
     """
@@ -190,8 +199,13 @@ def stock_ytd_high(code_str, qtype, year, today_str):
         raw = f"hk{code_str}"
     else:
         raw = f"{_tencent_prefix(code_str)}{code_str}"
+    try:
+        start = (datetime.date.fromisoformat(today_str)
+                 - datetime.timedelta(days=365)).isoformat()
+    except Exception:
+        start = f"{year - 1}-01-01"
     url = (f"https://web.ifzq.gtimg.cn/appstock/app/fqkline/get"
-           f"?param={raw},day,{year-1}-01-01,{today_str},320,qfq")
+           f"?param={raw},day,{start},{today_str},320,qfq")
     try:
         r = SESSION.get(url, headers=TENCENT_H, timeout=25)
         d = r.json()
@@ -202,8 +216,11 @@ def stock_ytd_high(code_str, qtype, year, today_str):
                 break
         if not node:
             return None
-        hi = max(float(x[3]) for x in node if x and len(x) > 3)
-        return hi
+        rows = [(str(x[0]), float(x[3])) for x in node if x and len(x) > 3]
+        if not rows:
+            return None
+        hd, hi = max(rows, key=lambda t: t[1])
+        return hi, hd
     except Exception as e:
         print(f"[query] 腾讯K线失败 {raw}: {e}")
         return None
@@ -240,7 +257,8 @@ def yf_ytd_high(ticker, year, today_str):
     纯前复权口径：adjusted_high = raw_high - sum(分红 where ex_date > high_date)
       - 前复权锚定最新日现价，历史价按「高点之后累计分红」下修；
       - 与腾讯 qfq 的 A股口径完全一致，确保回撤不被双重计入分红。
-    ticker 形如 'QQQM' / '03968.HK'。取数失败返回 None。
+    ticker 形如 'QQQM' / '03968.HK'。
+    返回 (high, high_date) 或 None；high_date 为「分红下修后调整值最高」的原始高点日。
     """
     try:
         import pandas as pd
@@ -250,11 +268,18 @@ def yf_ytd_high(ticker, year, today_str):
         highs = hist['High'].dropna()
         if highs.empty:
             return None
-        raw_high = float(highs.max())
-        high_date = highs.idxmax()
+        # 纯前复权：对每个原始高点按「其后累计分红」下修，取调整后最高
         div_col = hist['Dividends'].dropna()
-        adj = float(div_col[div_col.index > high_date].sum())
-        return raw_high - adj
+        best_adj = None
+        best_date = None
+        for dt, raw_high in highs.items():
+            adj = raw_high - float(div_col[div_col.index > dt].sum())
+            if best_adj is None or adj > best_adj:
+                best_adj = adj
+                best_date = dt.strftime('%Y-%m-%d')
+        if best_adj is None:
+            return None
+        return float(best_adj), best_date
     except Exception as e:
         print(f"[query] yfinance失败 {ticker}: {e}")
         return None
@@ -282,7 +307,7 @@ def hk_ytd_high(code_str, year, today_str):
 
 
 def _nasdaq_ytd_high(code_str, year, today_str):
-    """Nasdaq 历史日K 取近12个月最高，作 yfinance 兜底。返回 float 或 None。
+    """Nasdaq 历史日K 取近12个月最高，作 yfinance 兜底。返回 (high, date) 或 None。
 
     Nasdaq historical API 分页(每页~15条)，assetclass 需区分 etf/stocks；
     先试 etf 再试 stocks，合并取最高 high。
@@ -305,12 +330,12 @@ def _nasdaq_ytd_high(code_str, year, today_str):
                     h = x.get('high')
                     if h not in (None, ''):
                         try:
-                            hi.append(float(h))
+                            hi.append((x.get('date', ''), float(h)))
                         except Exception:
                             pass
                 off += len(rows)
             if hi:
-                best = max(hi)
+                best = max(hi, key=lambda t: t[1])
                 break
         return best
     except Exception as e:
@@ -319,11 +344,12 @@ def _nasdaq_ytd_high(code_str, year, today_str):
 
 
 def fund_ytd_high(code_str, year, today_str):
-    """东财 pingzhongdata 取近12个月最高 NAV。返回 float 或 None。
+    """东财 pingzhongdata 取近12个月最高 NAV。返回 (high, date) 或 None。
 
     pingzhongdata 一次返回全部历史净值（无分页限制），比 lsjz（仅最近~20条，
     会把 QDII 等基金的历史高点漏掉）可靠，2026-08-06 修复。
     Data_netWorthTrend = [{"x": 毫秒时间戳, "y": 单位净值, ...}, ...]
+    窗口：今天-365天（2026-09-03 修复：原 year-1-01-01 跨度约 20 个月）。
     """
     try:
         import re as _re
@@ -335,9 +361,18 @@ def fund_ytd_high(code_str, year, today_str):
         if not m:
             return None
         arr = _json.loads(m.group(1))
-        cutoff = _dt.datetime(year - 1, 1, 1).timestamp() * 1000
-        vals = [float(p['y']) for p in arr if p.get('x', 0) >= cutoff and p.get('y')]
-        return max(vals) if vals else None
+        try:
+            start_ms = (_dt.datetime.fromisoformat(today_str)
+                        - _dt.timedelta(days=365)).timestamp() * 1000
+        except Exception:
+            start_ms = _dt.datetime(year - 1, 1, 1).timestamp() * 1000
+        pts = [(p['x'], float(p['y']))
+               for p in arr if p.get('x', 0) >= start_ms and p.get('y')]
+        if not pts:
+            return None
+        x_ms, hi = max(pts, key=lambda t: t[1])
+        hd = _dt.datetime.fromtimestamp(x_ms / 1000).strftime('%Y-%m-%d')
+        return hi, hd
     except Exception as e:
         print(f"[query] 东财净值失败 {code_str}: {e}")
     return None
