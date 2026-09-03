@@ -2,18 +2,18 @@
   "year": 2026,
   "items": {
     "600036": {
-      "ytd_high": 44.534,
-      "ytd_high_date": "2026-08-07",
-      "level": 1
+      "ytd_high": 41.774,
+      "ytd_high_date": "2025-11-20",
+      "level": 0
     },
     "03968": {
-      "ytd_high": 52.288273000000004,
-      "ytd_high_date": "2026-08-07",
+      "ytd_high": 52.599998474121094,
+      "ytd_high_date": "2026-09-03",
       "level": 0
     },
     "QQQM": {
       "ytd_high": 307.85799145507815,
-      "ytd_high_date": "2026-08-07",
+      "ytd_high_date": "2026-06-03",
       "level": 0
     },
     "014002": {
@@ -23,34 +23,35 @@
     },
     "050025": {
       "ytd_high": 5.6792,
-      "ytd_high_date": "2026-08-17",
+      "ytd_high_date": "2026-08-13",
       "level": 0
     },
     "020741": {
-      "ytd_high": 1.1782,
-      "ytd_high_date": "2026-08-10",
+      "ytd_high": 1.1774,
+      "ytd_high_date": "2026-08-18",
       "level": 0
     },
     "020602": {
-      "ytd_high": 1.1686,
-      "ytd_high_date": "2026-08-10",
+      "ytd_high": 1.1683,
+      "ytd_high_date": "2025-11-12",
       "level": 0
     },
     "021277": {
       "ytd_high": 7.5651,
-      "ytd_high_date": "2026-08-18",
+      "ytd_high_date": "2026-06-22",
       "level": 3
     },
     "026096": {
       "ytd_high": 1.3422,
-      "ytd_high_date": "2026-08-18",
+      "ytd_high_date": "2026-06-25",
       "level": 4
     },
     "600900": {
       "ytd_high": 29.57,
-      "ytd_high_date": "2026-08-18",
+      "ytd_high_date": "2026-07-29",
       "level": 0
     }
   },
-  "updated_at": "2026-09-03"
+  "updated_at": "2026-09-03",
+  "anchor_ver": 2
 }
