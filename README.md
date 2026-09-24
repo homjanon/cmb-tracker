@@ -146,6 +146,8 @@
 
 
 
+**大V投资画像卡（2026-09-24 新增）**：在标的提及表下方新增「大V投资画像」区，读取 xueqiu-tracker 的 [`data/vip_profiles.json`](https://raw.githubusercontent.com/homjanon/xueqiu-tracker/main/data/vip_profiles.json)。每位大V一张卡：姓名 + 画像更新日期 + 一句话总评常显，点「展开画像」查看 5 维度（投资理念 / 选股与分析方法 / 交易与仓位习惯 / 关注领域与常谈标的 / 风险态度与心理特质）与近期演化记录。画像由 LLM 依据该大V历史发言每日幂等修订，只记稳定特质、不含行情判断，**仅供参考不构成投资建议**。数据链：用户自有 Cloudflare 代理（proxy.hellohopo.dpdns.org，no-store 实时）首选 → GitHub Contents API → jsDelivr 三级兜底。
+
 **表格内容（全自动，不判断买卖方向）**
 
 
