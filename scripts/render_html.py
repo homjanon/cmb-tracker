@@ -63,15 +63,15 @@ def render(rows, fund, t0, out_path, my_holdings=None, xqm_inline=None):
             zone_cell = "—"
         trs.append(f"""
         <tr>
-          <td><b>{r['name']}</b><br><span class="code">{r['code']}</span></td>
-          <td class="num" title="价数据源：{r.get('price_source','')}｜抓取：{r.get('quote_time','')}">{r['price'] if r['price'] else '—'}</td>
-          <td class="num">{zone_cell}</td>
-          <td class="num" title="PE 数据源：{r.get('pe_source','')}">{r['pe'] if r['pe'] else '—'}</td>
-          <td class="num" title="PB 数据源：{r.get('pb_source','')}">{r['pb'] if r['pb'] else '—'}</td>
-          <td class="num">{r['div_yield'] if r['div_yield'] else '—'}</td>
-          <td class="dims">{dims}</td>
-          <td class="num"><b style="color:{total_color};font-size:1.1em">{total:.0f}</b><span class="sub">/100</span></td>
-          <td>{_signal_badge(r['signal']['signal'])}</td>
+          <td class="cell-main"><b>{r['name']}</b><br><span class="code">{r['code']}</span></td>
+          <td class="num" data-label="现价" title="价数据源：{r.get('price_source','')}｜抓取：{r.get('quote_time','')}">{r['price'] if r['price'] else '—'}</td>
+          <td class="num" data-label="买入区间">{zone_cell}</td>
+          <td class="num" data-label="PE" title="PE 数据源：{r.get('pe_source','')}">{r['pe'] if r['pe'] else '—'}</td>
+          <td class="num" data-label="PB" title="PB 数据源：{r.get('pb_source','')}">{r['pb'] if r['pb'] else '—'}</td>
+          <td class="num" data-label="股息率">{r['div_yield'] if r['div_yield'] else '—'}</td>
+          <td class="dims" data-label="五维">{dims}</td>
+          <td class="num" data-label="总分"><b style="color:{total_color};font-size:1.1em">{total:.0f}</b><span class="sub">/100</span></td>
+          <td data-label="信号">{_signal_badge(r['signal']['signal'])}</td>
         </tr>""")
     # 雷达图数据
     radar = {r["short"]: [round(sc["dims"][k]["score"], 1) for k in DIM_KEYS] for r, sc in
@@ -121,11 +121,11 @@ def render(rows, fund, t0, out_path, my_holdings=None, xqm_inline=None):
         ra = f.get("research_as_of")
         trs_research.append(f"""
         <tr>
-          <td><b>{r['name']}</b></td>
-          <td>{rating if rating else '—'}</td>
-          <td>{inst if inst else '—'}</td>
-          <td class="num">{cnt if cnt is not None else '—'}</td>
-          <td class="code">{ra or '—'}</td>
+          <td class="cell-main"><b>{r['name']}</b></td>
+          <td data-label="东财评级">{rating if rating else '—'}</td>
+          <td data-label="最新机构">{inst if inst else '—'}</td>
+          <td class="num" data-label="近一月研报">{cnt if cnt is not None else '—'}</td>
+          <td class="code" data-label="数据日期">{ra or '—'}</td>
         </tr>""")
 
     html = f"""<!DOCTYPE html>
@@ -158,6 +158,37 @@ def render(rows, fund, t0, out_path, my_holdings=None, xqm_inline=None):
    background:#fff;padding:14px 16px;border-radius:10px}}
  .xq-summary{{white-space:pre-wrap;line-height:1.75;font-size:13px;color:#333}}
 @media(max-width:720px){{.grid{{grid-template-columns:1fr}}}}
+ /* ===== 移动端（2026-09-27）：静态表格转卡片，桌面端不受影响 =====
+    排版规范：标签左定宽 70px；数值右对齐（tabular-nums）；五维圆点/信号靠右端；
+    长文本（提醒）整宽左对齐。 */
+ @media(max-width:640px){{
+  .wrap{{padding:12px}}
+  header{{padding:16px 18px;border-radius:12px}} header h1{{font-size:19px}}
+  header .meta{{font-size:12px;line-height:1.6}}
+  .cards{{gap:10px;margin:14px 0}} .card{{min-width:calc(50% - 5px);padding:12px 14px}}
+  .card .v{{font-size:20px}}
+  .s-table{{display:block;background:none;border:none;border-radius:0;overflow:visible}}
+  .s-table tr.hdr{{display:none}}
+  .s-table tbody,.s-table tr,.s-table td{{display:block}}
+  .s-table tr{{background:#fff;border:1px solid #eef0f3;border-radius:12px;
+    padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}}
+  .s-table td{{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
+    text-align:left !important;font-size:13px;color:#222;
+    font-variant-numeric:tabular-nums}}
+  .s-table td::before{{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
+    font-weight:600;font-size:12px;letter-spacing:.2px}}
+  .s-table td.num{{justify-content:space-between}}
+  .s-table td.num > *{{margin-left:auto}}
+  .s-table td.cell-main{{display:block;font-size:15px;font-weight:600;padding:0 0 8px;
+    margin-bottom:6px;border-bottom:1px solid #f2f4f7}}
+  .s-table td.cell-main::before{{content:none}}
+  .s-table td.cell-main .code{{font-size:12px;color:#9aa4b2;font-weight:400}}
+  .s-table td.dims{{justify-content:space-between}}
+  .s-table td.dims > span{{display:flex;gap:4px;margin-left:auto}}
+  .s-table td[data-label="信号"]{{justify-content:space-between}}
+  .s-table td[data-label="信号"] > *{{margin-left:auto}}
+  .s-table .dim{{width:22px;height:22px;line-height:22px;font-size:11px;margin:0}}
+ }}
 </style></head>
 <body><div class="wrap">
 <header><h1>招招五维模型 · 五大行每日追踪</h1>
@@ -170,8 +201,8 @@ def render(rows, fund, t0, out_path, my_holdings=None, xqm_inline=None):
   <div class="card"><div class="t">持有/减配</div><div class="v" style="color:#e6a23c">{sum(1 for r in rows if r['signal']['signal'] in ('HOLD','REDUCE','UNKNOWN'))}</div></div>
 </div>
 
-<table>
-<tr><th>银行</th><th class="num">现价</th><th class="num">买入区间(元)</th><th class="num">PE</th><th class="num">PB</th><th class="num">股息率%</th><th>五维(质量/负债/中间/资本/管理)</th><th class="num">总分</th><th>信号</th></tr>
+<table class="s-table">
+<tr class="hdr"><th>银行</th><th class="num">现价</th><th class="num">买入区间(元)</th><th class="num">PE</th><th class="num">PB</th><th class="num">股息率%</th><th>五维(质量/负债/中间/资本/管理)</th><th class="num">总分</th><th>信号</th></tr>
 {''.join(trs)}
 </table>
 
@@ -186,8 +217,8 @@ def render(rows, fund, t0, out_path, my_holdings=None, xqm_inline=None):
 </div>
 
 <div class="panel" style="margin-top:16px"><h3>分析师研报评级（事件更新 · 不计入五维评分）</h3>
-<table>
-<tr><th>银行</th><th>东财评级</th><th>最新机构</th><th class="num">近一月研报</th><th>数据日期</th></tr>
+<table class="s-table">
+<tr class="hdr"><th>银行</th><th>东财评级</th><th>最新机构</th><th class="num">近一月研报</th><th>数据日期</th></tr>
 {''.join(trs_research)}
 </table>
 </div>

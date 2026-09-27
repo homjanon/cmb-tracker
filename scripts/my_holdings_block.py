@@ -35,6 +35,29 @@ def my_holdings_css():
  .myh-foot{font-size:11px;color:#aaa;margin-top:8px;line-height:1.7}
  .myh tr.alert td{background:#fdeaea}
  .myh tr.buy td{background:#e8f7ee}
+
+@media(max-width:640px){
+ /* 持仓回撤表 → 卡片：标签左定宽 / 数值右对齐 / 提醒整宽左对齐 */
+ .myh table{display:block;background:none;border:none;box-shadow:none}
+ .myh thead{display:none}
+ .myh tbody,.myh tr,.myh td{display:block}
+ .myh tr{background:#fff;border:1px solid #eef0f3;border-radius:12px;
+   padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+ .myh tr.alert{background:#fdeaea;border-color:#f5c2c7}
+ .myh tr.buy{background:#e8f7ee;border-color:#b7e4c7}
+ .myh td{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
+   font-size:13px;font-variant-numeric:tabular-nums}
+ .myh td::before{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
+   font-weight:600;font-size:12px;letter-spacing:.2px}
+ .myh td.myh-num{justify-content:space-between}
+ .myh td.myh-num > *{margin-left:auto}
+ .myh td.cell-main{display:block;font-size:15px;font-weight:600;padding:0 0 8px;
+   margin-bottom:6px;border-bottom:1px solid rgba(0,0,0,.06)}
+ .myh td.cell-main::before{content:none}
+ .myh td.cell-rem{display:block;padding-top:2px}
+ .myh td.cell-rem::before{display:block;margin-bottom:3px}
+ .myh .myh-code{font-size:12px;color:#9aa4b2;font-weight:400}
+}
 """
 
 
@@ -79,12 +102,12 @@ def my_holdings_js():
     var buy = alert && /接回|加大|加倍/.test(h.reminder);
     var rem = alert ? remSpan(h.reminder) : '<span style="color:#bbb">—</span>';
     return '<tr'+(buy?' class="buy"':(alert?' class="alert"':''))+'>'+
-      '<td><span class="myh-sym">'+esc(h.name)+'</span></td>'+
-      '<td class="myh-code">'+esc(h.code)+'</td>'+
-      '<td class="myh-num">'+pct(h.ytd_high_profit_pct)+'</td>'+
-      '<td class="myh-num">'+pct(h.current_profit_pct)+'</td>'+
-      '<td class="myh-num">'+ddCell(h.profit_drawdown_pct)+'</td>'+
-      '<td>'+rem+'</td></tr>';
+      '<td class="cell-main"><span class="myh-sym">'+esc(h.name)+'</span></td>'+
+      '<td class="myh-code" data-label="代码">'+esc(h.code)+'</td>'+
+      '<td class="myh-num" data-label="最高盈利">'+pct(h.ytd_high_profit_pct)+'</td>'+
+      '<td class="myh-num" data-label="当前盈利">'+pct(h.current_profit_pct)+'</td>'+
+      '<td class="myh-num" data-label="盈利回落">'+ddCell(h.profit_drawdown_pct)+'</td>'+
+      '<td class="cell-rem" data-label="提醒">'+rem+'</td></tr>';
   }
   function render(list){
     var root=document.getElementById('myh-root');

@@ -43,6 +43,33 @@ XQ_TABLE_CSS = """
  .xqm-age,.xqm thead th.c-age{display:none}
  .xqm td,.xqm th{padding:7px 6px;font-size:12px}
 }
+
+@media(max-width:640px){
+ /* 标的提及表 → 卡片：标签左定宽 / 数值与次数右端 / 原文摘录整宽左对齐 */
+ .xqm table{display:block;background:none;border:none;box-shadow:none}
+ .xqm thead{display:none}
+ .xqm tbody,.xqm tr,.xqm td{display:block}
+ .xqm tr{background:#fff;border:1px solid #eef0f3;border-radius:12px;
+   padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+ .xqm tr.stale{background:#fafafa}
+ .xqm td{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
+   font-size:13px;font-variant-numeric:tabular-nums}
+ .xqm td::before{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
+   font-weight:600;font-size:12px;letter-spacing:.2px}
+ .xqm td.cell-main{display:block;font-size:14px;font-weight:600;padding:0 0 8px;
+   margin-bottom:6px;border-bottom:1px solid #f2f4f7}
+ .xqm td.cell-main::before{content:none}
+ .xqm td.xqm-q{display:block;line-height:1.7;color:#444;padding-top:2px}
+ .xqm td.xqm-q::before{display:block;margin-bottom:3px}
+ .xqm td.xqm-qty{justify-content:space-between}
+ .xqm td.xqm-qty > *{margin-left:auto}
+ .xqm td.xqm-n{justify-content:space-between}
+ .xqm td.xqm-n > *{margin-left:auto}
+ .xqm td.xqm-n button{margin-left:auto}
+ .xqm tr.xqm-his{background:#fbfcfd;padding:10px 14px}
+ .xqm tr.xqm-his td{display:block;padding:0}
+ .xqm tr.xqm-his td::before{content:none}
+}
 """
 
 # ---------------------------------------------------------------- HTML 容器
@@ -96,13 +123,13 @@ XQ_TABLE_JS = r"""
       ? '<button type="button" data-t="'+idx+'">'+s.mention_count+'</button>'
       : '<button type="button" class="flat">'+s.mention_count+'</button>';
     var h='<tr'+(stale?' class="stale"':'')+'>'+
-      '<td><span class="xqm-sym">'+esc(name)+'</span>'+
+      '<td class="cell-main"><span class="xqm-sym">'+esc(name)+'</span>'+
         (s.normalized?'':'<span class="xqm-unk" title="未收录进别名词典">?</span>')+'</td>'+
-      '<td class="xqm-t">'+fmt(L.at)+'</td>'+
-      '<td class="xqm-age c-age">'+age+'天</td>'+
-      '<td class="xqm-q">'+esc(L.quote)+'</td>'+
-      '<td class="xqm-qty">'+(L.qty?esc(L.qty):'<span style="color:#ccc">—</span>')+'</td>'+
-      '<td class="xqm-n">'+nCell+'</td></tr>';
+      '<td class="xqm-t" data-label="最近提及">'+fmt(L.at)+'</td>'+
+      '<td class="xqm-age c-age" data-label="距今">'+age+'天</td>'+
+      '<td class="xqm-q" data-label="原文摘录">'+esc(L.quote)+'</td>'+
+      '<td class="xqm-qty" data-label="数量">'+(L.qty?esc(L.qty):'<span style="color:#ccc">—</span>')+'</td>'+
+      '<td class="xqm-n" data-label="次数">'+nCell+'</td></tr>';
     if(his.length){
       var inner=his.map(function(r){
         return '<div class="h"><span>'+fmt(r.at)+'</span><em style="font-style:normal">'+
