@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-25",
+  "updated_at": "2026-09-27",
   "items": [
     {
       "code": "600036",
@@ -29,8 +29,8 @@
       "code": "QQQM",
       "name": "Invesco纳指100ETF",
       "ytd_high_profit_pct": 9.59,
-      "current_profit_pct": 8.63,
-      "profit_drawdown_pct": 0.97,
+      "current_profit_pct": 9.12,
+      "profit_drawdown_pct": 0.47,
       "reminder": ""
     },
     {
