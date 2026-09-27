@@ -28,36 +28,55 @@
    background:#fff;padding:14px 16px;border-radius:10px}
  .xq-summary{white-space:pre-wrap;line-height:1.75;font-size:13px;color:#333}
 @media(max-width:720px){.grid{grid-template-columns:1fr}}
- /* ===== 移动端（2026-09-27）：静态表格转卡片，桌面端不受影响 =====
-    排版规范：标签左定宽 70px；数值右对齐（tabular-nums）；五维圆点/信号靠右端；
-    长文本（提醒）整宽左对齐。 */
- @media(max-width:640px){
+ /* ===== 移动端（2026-09-27 v3）：静态表格转紧凑卡片 =====
+    卡片内 2 列网格：标签左、数值右（两条值列竖线对齐，铺满宽度不留白）；
+    成对字段同行（现价|PE、PB|股息率、总分|信号），长内容整宽。桌面端不受影响。 */
+ @media(max-width:740px){
   .wrap{padding:12px}
   header{padding:16px 18px;border-radius:12px} header h1{font-size:19px}
   header .meta{font-size:12px;line-height:1.6}
   .cards{gap:10px;margin:14px 0} .card{min-width:calc(50% - 5px);padding:12px 14px}
   .card .v{font-size:20px}
-  .s-table{display:block;background:none;border:none;border-radius:0;overflow:visible}
+  .s-table{display:block;background:none;border:none;border-radius:0;overflow:visible;
+    margin-bottom:8px}
+  .panel{margin-top:22px}
   .s-table tr.hdr{display:none}
-  .s-table tbody,.s-table tr,.s-table td{display:block}
-  .s-table tr{background:#fff;border:1px solid #eef0f3;border-radius:12px;
-    padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
-  .s-table td{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
-    text-align:left !important;font-size:13px;color:#222;
-    font-variant-numeric:tabular-nums}
-  .s-table td::before{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
-    font-weight:600;font-size:12px;letter-spacing:.2px}
-  .s-table td.num{justify-content:space-between}
-  .s-table td.num > *{margin-left:auto}
-  .s-table td.cell-main{display:block;font-size:15px;font-weight:600;padding:0 0 8px;
-    margin-bottom:6px;border-bottom:1px solid #f2f4f7}
+  .s-table tbody{display:block}
+  .s-table tr{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:2px;
+    background:#fff;border:1px solid #eef0f3;border-radius:12px;padding:11px 14px;
+    margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+  .s-table td{display:flex;justify-content:space-between;gap:8px;align-items:baseline;
+    border:none;padding:0;min-width:0;text-align:left !important;font-size:13px;
+    line-height:1.55;color:#222;font-variant-numeric:tabular-nums}
+  .s-table td::before{content:attr(data-label);flex:0 0 auto;color:#8a94a6;font-weight:600;
+    font-size:11.5px;letter-spacing:.2px}
+  .s-table td > .v{margin-left:auto;text-align:right}
+  .s-table td.cell-main{grid-column:1/-1;display:flex;justify-content:space-between;
+    align-items:baseline;gap:8px;font-size:15px;font-weight:600;padding:0 0 6px;
+    margin-bottom:3px;border-bottom:1px solid #f2f4f7}
   .s-table td.cell-main::before{content:none}
-  .s-table td.cell-main .code{font-size:12px;color:#9aa4b2;font-weight:400}
-  .s-table td.dims{justify-content:space-between}
-  .s-table td.dims > span{display:flex;gap:4px;margin-left:auto}
-  .s-table td[data-label="信号"]{justify-content:space-between}
-  .s-table td[data-label="信号"] > *{margin-left:auto}
-  .s-table .dim{width:22px;height:22px;line-height:22px;font-size:11px;margin:0}
+  .s-table td.cell-main br{display:none}
+  .s-table td.cell-main .code{font-size:11.5px;color:#9aa4b2;font-weight:400;margin:0}
+  .s-table td[data-label="现价"]{order:1} .s-table td[data-label="PE"]{order:2}
+  .s-table td[data-label="PB"]{order:3} .s-table td[data-label="股息率"]{order:4}
+  .s-table td[data-label="买入区间"]{order:5;grid-column:1/-1}
+  .s-table td[data-label="买入区间"] .v br{display:none}
+  .s-table td[data-label="买入区间"] .v span{margin-left:6px}
+  .s-table td.dims{order:6;grid-column:1/-1}
+  .s-table td.dims .v{display:flex;gap:4px;margin-left:auto}
+  .s-table td[data-label="总分"]{order:7}
+  .s-table td[data-label="信号"]{order:8}
+  /* 研报表（同用 .s-table）：评级|研报数 同行，机构/日期 整宽 */
+  .s-table td[data-label="东财评级"]{order:1}
+  .s-table td[data-label="近一月研报"]{order:2}
+  .s-table td[data-label="最新机构"]{order:3;grid-column:1/-1}
+  .s-table td[data-label="数据日期"]{order:4;grid-column:1/-1;color:#6b7688}
+  .s-table .dim{width:20px;height:20px;line-height:20px;font-size:11px;margin:0}
+  /* 超窄屏（≤350px）：字号收敛，防标签+数值挤压 */
+  @media(max-width:350px){
+   .s-table td{gap:6px;font-size:12.5px}
+   .s-table td::before{font-size:11px}
+  }
  }
 
  .myh{margin-top:6px;margin-bottom:18px}
@@ -84,27 +103,39 @@
  .myh tr.alert td{background:#fdeaea}
  .myh tr.buy td{background:#e8f7ee}
 
-@media(max-width:640px){
- /* 持仓回撤表 → 卡片：标签左定宽 / 数值右对齐 / 提醒整宽左对齐 */
+@media(max-width:740px){
+ /* 持仓回撤表 → 紧凑卡片：标的|代码 同行，最高|当前 同行，回落整宽，
+    提醒整宽（无提醒则整行隐藏）；数值列右对齐。 */
+ .myh{margin-top:16px;padding-top:14px;border-top:1px solid #eef0f3}
  .myh table{display:block;background:none;border:none;box-shadow:none}
  .myh thead{display:none}
- .myh tbody,.myh tr,.myh td{display:block}
- .myh tr{background:#fff;border:1px solid #eef0f3;border-radius:12px;
-   padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+ .myh tbody{display:block}
+ .myh tr{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:2px;background:#fff;
+   border:1px solid #eef0f3;border-radius:12px;padding:11px 14px;margin-bottom:10px;
+   box-shadow:0 1px 3px rgba(16,24,40,.05)}
  .myh tr.alert{background:#fdeaea;border-color:#f5c2c7}
  .myh tr.buy{background:#e8f7ee;border-color:#b7e4c7}
- .myh td{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
-   font-size:13px;font-variant-numeric:tabular-nums}
- .myh td::before{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
-   font-weight:600;font-size:12px;letter-spacing:.2px}
- .myh td.myh-num{justify-content:space-between}
- .myh td.myh-num > *{margin-left:auto}
- .myh td.cell-main{display:block;font-size:15px;font-weight:600;padding:0 0 8px;
-   margin-bottom:6px;border-bottom:1px solid rgba(0,0,0,.06)}
+ .myh td{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border:none;
+   padding:0;min-width:0;font-size:13px;line-height:1.55;font-variant-numeric:tabular-nums}
+ .myh td::before{content:attr(data-label);flex:0 0 auto;color:#8a94a6;font-weight:600;
+   font-size:11.5px;letter-spacing:.2px}
+ .myh td.cell-main{grid-column:1/2;font-size:15px;font-weight:600;padding:0 14px 6px 0;
+   margin:0 -14px 3px 0;border-bottom:1px solid rgba(0,0,0,.07)}
  .myh td.cell-main::before{content:none}
- .myh td.cell-rem{display:block;padding-top:2px}
- .myh td.cell-rem::before{display:block;margin-bottom:3px}
- .myh .myh-code{font-size:12px;color:#9aa4b2;font-weight:400}
+ .myh td.myh-code{grid-column:2/3;justify-content:flex-end;align-self:start;font-size:11.5px;
+   color:#9aa4b2;padding:0 0 6px;margin-bottom:3px;border-bottom:1px solid rgba(0,0,0,.07)}
+ .myh td.myh-code::before{content:none}
+ .myh td[data-label="盈利回落"]{grid-column:1/-1}
+ .myh td.cell-rem{grid-column:1/-1;justify-content:flex-start;flex-wrap:wrap;gap:6px;
+   padding-top:1px}
+ .myh td.cell-rem::before{flex:0 0 auto}
+ .myh td.rem-empty{display:none}
+ /* 超窄屏（≤350px）：字号收敛 + 提醒可折行 */
+ @media(max-width:350px){
+  .myh td{gap:6px;font-size:12.5px}
+  .myh td::before{font-size:11px}
+  .myh td.cell-rem > span{min-width:0;overflow-wrap:anywhere;white-space:normal}
+ }
 }
 
  .xqm{margin-top:14px;border-top:1px solid #f0f0f0;padding-top:14px}
@@ -145,31 +176,40 @@
  .xqm td,.xqm th{padding:7px 6px;font-size:12px}
 }
 
-@media(max-width:640px){
- /* 标的提及表 → 卡片：标签左定宽 / 数值与次数右端 / 原文摘录整宽左对齐 */
+@media(max-width:740px){
+ /* 标的提及表 → 紧凑卡片：标的|次数 同行，最近提及|距今 同行，数量/摘录整宽；
+    数值列右对齐。 */
+ .xqm{margin-top:18px;padding-top:14px;border-top:1px solid #eef0f3}
  .xqm table{display:block;background:none;border:none;box-shadow:none}
  .xqm thead{display:none}
- .xqm tbody,.xqm tr,.xqm td{display:block}
- .xqm tr{background:#fff;border:1px solid #eef0f3;border-radius:12px;
-   padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+ .xqm tbody{display:block}
+ .xqm tr{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:2px;background:#fff;
+   border:1px solid #eef0f3;border-radius:12px;padding:11px 14px;margin-bottom:10px;
+   box-shadow:0 1px 3px rgba(16,24,40,.05)}
  .xqm tr.stale{background:#fafafa}
- .xqm td{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
-   font-size:13px;font-variant-numeric:tabular-nums}
- .xqm td::before{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
-   font-weight:600;font-size:12px;letter-spacing:.2px}
- .xqm td.cell-main{display:block;font-size:14px;font-weight:600;padding:0 0 8px;
-   margin-bottom:6px;border-bottom:1px solid #f2f4f7}
+ .xqm td{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border:none;
+   padding:0;min-width:0;font-size:13px;line-height:1.55;font-variant-numeric:tabular-nums}
+ .xqm td::before{content:attr(data-label);flex:0 0 auto;color:#8a94a6;font-weight:600;
+   font-size:11.5px;letter-spacing:.2px}
+ .xqm td.cell-main{grid-column:1/2;font-size:14px;font-weight:600;padding:0 14px 6px 0;
+   margin:0 -14px 3px 0;border-bottom:1px solid #f2f4f7}
  .xqm td.cell-main::before{content:none}
- .xqm td.xqm-q{display:block;line-height:1.7;color:#444;padding-top:2px}
+ .xqm td.xqm-n{grid-column:2/3;justify-content:flex-end;align-self:start;padding:0 0 6px;
+   margin-bottom:3px;border-bottom:1px solid #f2f4f7}
+ .xqm td.xqm-n::before{content:none}
+ .xqm td.xqm-t{order:1;grid-column:1/2} .xqm td.xqm-age{order:2;grid-column:2/3}
+ .xqm td.xqm-qty{order:3;grid-column:1/-1}
+ .xqm td.xqm-q{order:4;grid-column:1/-1;display:block;line-height:1.7;color:#444;padding-top:3px}
  .xqm td.xqm-q::before{display:block;margin-bottom:3px}
- .xqm td.xqm-qty{justify-content:space-between}
- .xqm td.xqm-qty > *{margin-left:auto}
- .xqm td.xqm-n{justify-content:space-between}
- .xqm td.xqm-n > *{margin-left:auto}
- .xqm td.xqm-n button{margin-left:auto}
- .xqm tr.xqm-his{background:#fbfcfd;padding:10px 14px}
+ .xqm tr.xqm-his{display:block;background:#fbfcfd;padding:10px 14px}
  .xqm tr.xqm-his td{display:block;padding:0}
  .xqm tr.xqm-his td::before{content:none}
+ /* 超窄屏（≤350px）：字号收敛 */
+ @media(max-width:350px){
+  .xqm td{gap:6px;font-size:12.5px}
+  .xqm td::before{font-size:11px}
+  .xqm td.xqm-t,.xqm td.xqm-age{grid-column:1/-1}
+ }
 }
 
  .xqp{margin-top:14px;border-top:1px solid #f0f0f0;padding-top:14px}
@@ -197,7 +237,7 @@
 </style></head>
 <body><div class="wrap">
 <header><h1>招招五维模型 · 五大行每日追踪</h1>
-<div class="meta">更新时间：2026-09-27 16:28 ｜ 标的：招商/工商/建设/农业/中国/宁波（交行已排除）｜ 数据源：腾讯/新浪/akshare/baostock</div></header>
+<div class="meta">更新时间：2026-09-27 17:24 ｜ 标的：招商/工商/建设/农业/中国/宁波（交行已排除）｜ 数据源：腾讯/新浪/akshare/baostock</div></header>
 
 <div class="cards">
   <div class="card"><div class="t">追踪标的数</div><div class="v">6</div></div>
@@ -211,69 +251,69 @@
 
         <tr>
           <td class="cell-main"><b>招商银行</b><br><span class="code">600036</span></td>
-          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T16:30:25.684964+08:00">40.69</td>
-          <td class="num" data-label="买入区间">31.65 ~ 40.69<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
+          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T17:25:33.584727+08:00">40.69</td>
+          <td class="num" data-label="买入区间"><span class="v">31.65 ~ 40.69<br><span style="color:#2e7d32;font-size:11px">区间内</span></span></td>
           <td class="num" data-label="PE" title="PE 数据源：tencent">6.76</td>
           <td class="num" data-label="PB" title="PB 数据源：tencent">0.9</td>
           <td class="num" data-label="股息率">4.955</td>
-          <td class="dims" data-label="五维"><span class="dim" title="资产质量">18</span> <span class="dim" title="负债结构">12</span> <span class="dim" title="中间业务">14</span> <span class="dim" title="资本实力">19</span> <span class="dim" title="管理层">16</span></td>
-          <td class="num" data-label="总分"><b style="color:#e6a23c;font-size:1.1em">78</b><span class="sub">/100</span></td>
-          <td data-label="信号"><span class="badge" style="background:#e6a23c">持有</span></td>
+          <td class="dims" data-label="五维"><span class="v"><span class="dim" title="资产质量">18</span> <span class="dim" title="负债结构">12</span> <span class="dim" title="中间业务">14</span> <span class="dim" title="资本实力">19</span> <span class="dim" title="管理层">16</span></span></td>
+          <td class="num" data-label="总分"><span class="v"><b style="color:#e6a23c;font-size:1.1em">78</b><span class="sub">/100</span></span></td>
+          <td data-label="信号"><span class="v"><span class="badge" style="background:#e6a23c">持有</span></span></td>
         </tr>
         <tr>
           <td class="cell-main"><b>工商银行</b><br><span class="code">601398</span></td>
-          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T16:30:25.684964+08:00">8.13</td>
-          <td class="num" data-label="买入区间">7.80 ~ 10.02<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
+          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T17:25:33.584727+08:00">8.13</td>
+          <td class="num" data-label="买入区间"><span class="v">7.80 ~ 10.02<br><span style="color:#2e7d32;font-size:11px">区间内</span></span></td>
           <td class="num" data-label="PE" title="PE 数据源：tencent">7.74</td>
           <td class="num" data-label="PB" title="PB 数据源：tencent">0.73</td>
           <td class="num" data-label="股息率">3.813</td>
-          <td class="dims" data-label="五维"><span class="dim" title="资产质量">11</span> <span class="dim" title="负债结构">9</span> <span class="dim" title="中间业务">8</span> <span class="dim" title="资本实力">12</span> <span class="dim" title="管理层">9</span></td>
-          <td class="num" data-label="总分"><b style="color:#e6a23c;font-size:1.1em">48</b><span class="sub">/100</span></td>
-          <td data-label="信号"><span class="badge" style="background:#e6a23c">持有</span></td>
+          <td class="dims" data-label="五维"><span class="v"><span class="dim" title="资产质量">11</span> <span class="dim" title="负债结构">9</span> <span class="dim" title="中间业务">8</span> <span class="dim" title="资本实力">12</span> <span class="dim" title="管理层">9</span></span></td>
+          <td class="num" data-label="总分"><span class="v"><b style="color:#e6a23c;font-size:1.1em">48</b><span class="sub">/100</span></span></td>
+          <td data-label="信号"><span class="v"><span class="badge" style="background:#e6a23c">持有</span></span></td>
         </tr>
         <tr>
           <td class="cell-main"><b>建设银行</b><br><span class="code">601939</span></td>
-          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T16:30:25.684964+08:00">10.98</td>
-          <td class="num" data-label="买入区间">9.61 ~ 12.35<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
+          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T17:25:33.584727+08:00">10.98</td>
+          <td class="num" data-label="买入区间"><span class="v">9.61 ~ 12.35<br><span style="color:#2e7d32;font-size:11px">区间内</span></span></td>
           <td class="num" data-label="PE" title="PE 数据源：tencent">8.29</td>
           <td class="num" data-label="PB" title="PB 数据源：tencent">0.8</td>
           <td class="num" data-label="股息率">3.543</td>
-          <td class="dims" data-label="五维"><span class="dim" title="资产质量">12</span> <span class="dim" title="负债结构">10</span> <span class="dim" title="中间业务">8</span> <span class="dim" title="资本实力">14</span> <span class="dim" title="管理层">8</span></td>
-          <td class="num" data-label="总分"><b style="color:#e6a23c;font-size:1.1em">52</b><span class="sub">/100</span></td>
-          <td data-label="信号"><span class="badge" style="background:#e6a23c">持有</span></td>
+          <td class="dims" data-label="五维"><span class="v"><span class="dim" title="资产质量">12</span> <span class="dim" title="负债结构">10</span> <span class="dim" title="中间业务">8</span> <span class="dim" title="资本实力">14</span> <span class="dim" title="管理层">8</span></span></td>
+          <td class="num" data-label="总分"><span class="v"><b style="color:#e6a23c;font-size:1.1em">52</b><span class="sub">/100</span></span></td>
+          <td data-label="信号"><span class="v"><span class="badge" style="background:#e6a23c">持有</span></span></td>
         </tr>
         <tr>
           <td class="cell-main"><b>农业银行</b><br><span class="code">601288</span></td>
-          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T16:30:25.684964+08:00">6.87</td>
-          <td class="num" data-label="买入区间">5.72 ~ 7.36<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
+          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T17:25:33.584727+08:00">6.87</td>
+          <td class="num" data-label="买入区间"><span class="v">5.72 ~ 7.36<br><span style="color:#2e7d32;font-size:11px">区间内</span></span></td>
           <td class="num" data-label="PE" title="PE 数据源：tencent">8.07</td>
           <td class="num" data-label="PB" title="PB 数据源：tencent">0.84</td>
           <td class="num" data-label="股息率">3.624</td>
-          <td class="dims" data-label="五维"><span class="dim" title="资产质量">13</span> <span class="dim" title="负债结构">10</span> <span class="dim" title="中间业务">11</span> <span class="dim" title="资本实力">9</span> <span class="dim" title="管理层">11</span></td>
-          <td class="num" data-label="总分"><b style="color:#e6a23c;font-size:1.1em">54</b><span class="sub">/100</span></td>
-          <td data-label="信号"><span class="badge" style="background:#e6a23c">持有</span></td>
+          <td class="dims" data-label="五维"><span class="v"><span class="dim" title="资产质量">13</span> <span class="dim" title="负债结构">10</span> <span class="dim" title="中间业务">11</span> <span class="dim" title="资本实力">9</span> <span class="dim" title="管理层">11</span></span></td>
+          <td class="num" data-label="总分"><span class="v"><b style="color:#e6a23c;font-size:1.1em">54</b><span class="sub">/100</span></span></td>
+          <td data-label="信号"><span class="v"><span class="badge" style="background:#e6a23c">持有</span></span></td>
         </tr>
         <tr>
           <td class="cell-main"><b>中国银行</b><br><span class="code">601988</span></td>
-          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T16:30:25.684964+08:00">6.62</td>
-          <td class="num" data-label="买入区间">5.94 ~ 7.64<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
+          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T17:25:33.584727+08:00">6.62</td>
+          <td class="num" data-label="买入区间"><span class="v">5.94 ~ 7.64<br><span style="color:#2e7d32;font-size:11px">区间内</span></span></td>
           <td class="num" data-label="PE" title="PE 数据源：tencent">8.57</td>
           <td class="num" data-label="PB" title="PB 数据源：tencent">0.78</td>
           <td class="num" data-label="股息率">3.414</td>
-          <td class="dims" data-label="五维"><span class="dim" title="资产质量">11</span> <span class="dim" title="负债结构">8</span> <span class="dim" title="中间业务">9</span> <span class="dim" title="资本实力">10</span> <span class="dim" title="管理层">7</span></td>
-          <td class="num" data-label="总分"><b style="color:#e6a23c;font-size:1.1em">45</b><span class="sub">/100</span></td>
-          <td data-label="信号"><span class="badge" style="background:#e6a23c">持有</span></td>
+          <td class="dims" data-label="五维"><span class="v"><span class="dim" title="资产质量">11</span> <span class="dim" title="负债结构">8</span> <span class="dim" title="中间业务">9</span> <span class="dim" title="资本实力">10</span> <span class="dim" title="管理层">7</span></span></td>
+          <td class="num" data-label="总分"><span class="v"><b style="color:#e6a23c;font-size:1.1em">45</b><span class="sub">/100</span></span></td>
+          <td data-label="信号"><span class="v"><span class="badge" style="background:#e6a23c">持有</span></span></td>
         </tr>
         <tr>
           <td class="cell-main"><b>宁波银行</b><br><span class="code">002142</span></td>
-          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T16:30:25.684964+08:00">34.91</td>
-          <td class="num" data-label="买入区间">28.27 ~ 37.69<br><span style="color:#2e7d32;font-size:11px">区间内</span></td>
+          <td class="num" data-label="现价" title="价数据源：tencent｜抓取：2026-09-27T17:25:33.584727+08:00">34.91</td>
+          <td class="num" data-label="买入区间"><span class="v">28.27 ~ 37.69<br><span style="color:#2e7d32;font-size:11px">区间内</span></span></td>
           <td class="num" data-label="PE" title="PE 数据源：tencent">7.41</td>
           <td class="num" data-label="PB" title="PB 数据源：tencent">0.97</td>
           <td class="num" data-label="股息率">3.437</td>
-          <td class="dims" data-label="五维"><span class="dim" title="资产质量">18</span> <span class="dim" title="负债结构">2</span> <span class="dim" title="中间业务">12</span> <span class="dim" title="资本实力">8</span> <span class="dim" title="管理层">12</span></td>
-          <td class="num" data-label="总分"><b style="color:#e6a23c;font-size:1.1em">52</b><span class="sub">/100</span></td>
-          <td data-label="信号"><span class="badge" style="background:#d48265">买入</span></td>
+          <td class="dims" data-label="五维"><span class="v"><span class="dim" title="资产质量">18</span> <span class="dim" title="负债结构">2</span> <span class="dim" title="中间业务">12</span> <span class="dim" title="资本实力">8</span> <span class="dim" title="管理层">12</span></span></td>
+          <td class="num" data-label="总分"><span class="v"><b style="color:#e6a23c;font-size:1.1em">52</b><span class="sub">/100</span></span></td>
+          <td data-label="信号"><span class="v"><span class="badge" style="background:#d48265">买入</span></span></td>
         </tr>
 </table>
 
@@ -539,7 +579,8 @@ new Chart(document.getElementById('bar'), {"type": "bar", "data": {"labels": ["�
       '<td class="myh-num" data-label="最高盈利">'+pct(h.ytd_high_profit_pct)+'</td>'+
       '<td class="myh-num" data-label="当前盈利">'+pct(h.current_profit_pct)+'</td>'+
       '<td class="myh-num" data-label="盈利回落">'+ddCell(h.profit_drawdown_pct)+'</td>'+
-      '<td class="cell-rem" data-label="提醒">'+rem+'</td></tr>';
+      '<td class="cell-rem'+(alert?'':' rem-empty')+'" data-label="提醒">'+rem+'</td>'+
+      '</tr>';
   }
   function render(list){
     var root=document.getElementById('myh-root');
