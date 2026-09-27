@@ -44,31 +44,40 @@ XQ_TABLE_CSS = """
  .xqm td,.xqm th{padding:7px 6px;font-size:12px}
 }
 
-@media(max-width:640px){
- /* 标的提及表 → 卡片：标签左定宽 / 数值与次数右端 / 原文摘录整宽左对齐 */
+@media(max-width:740px){
+ /* 标的提及表 → 紧凑卡片：标的|次数 同行，最近提及|距今 同行，数量/摘录整宽；
+    数值列右对齐。 */
+ .xqm{margin-top:18px;padding-top:14px;border-top:1px solid #eef0f3}
  .xqm table{display:block;background:none;border:none;box-shadow:none}
  .xqm thead{display:none}
- .xqm tbody,.xqm tr,.xqm td{display:block}
- .xqm tr{background:#fff;border:1px solid #eef0f3;border-radius:12px;
-   padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+ .xqm tbody{display:block}
+ .xqm tr{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:2px;background:#fff;
+   border:1px solid #eef0f3;border-radius:12px;padding:11px 14px;margin-bottom:10px;
+   box-shadow:0 1px 3px rgba(16,24,40,.05)}
  .xqm tr.stale{background:#fafafa}
- .xqm td{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
-   font-size:13px;font-variant-numeric:tabular-nums}
- .xqm td::before{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
-   font-weight:600;font-size:12px;letter-spacing:.2px}
- .xqm td.cell-main{display:block;font-size:14px;font-weight:600;padding:0 0 8px;
-   margin-bottom:6px;border-bottom:1px solid #f2f4f7}
+ .xqm td{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border:none;
+   padding:0;min-width:0;font-size:13px;line-height:1.55;font-variant-numeric:tabular-nums}
+ .xqm td::before{content:attr(data-label);flex:0 0 auto;color:#8a94a6;font-weight:600;
+   font-size:11.5px;letter-spacing:.2px}
+ .xqm td.cell-main{grid-column:1/2;font-size:14px;font-weight:600;padding:0 14px 6px 0;
+   margin:0 -14px 3px 0;border-bottom:1px solid #f2f4f7}
  .xqm td.cell-main::before{content:none}
- .xqm td.xqm-q{display:block;line-height:1.7;color:#444;padding-top:2px}
+ .xqm td.xqm-n{grid-column:2/3;justify-content:flex-end;align-self:start;padding:0 0 6px;
+   margin-bottom:3px;border-bottom:1px solid #f2f4f7}
+ .xqm td.xqm-n::before{content:none}
+ .xqm td.xqm-t{order:1;grid-column:1/2} .xqm td.xqm-age{order:2;grid-column:2/3}
+ .xqm td.xqm-qty{order:3;grid-column:1/-1}
+ .xqm td.xqm-q{order:4;grid-column:1/-1;display:block;line-height:1.7;color:#444;padding-top:3px}
  .xqm td.xqm-q::before{display:block;margin-bottom:3px}
- .xqm td.xqm-qty{justify-content:space-between}
- .xqm td.xqm-qty > *{margin-left:auto}
- .xqm td.xqm-n{justify-content:space-between}
- .xqm td.xqm-n > *{margin-left:auto}
- .xqm td.xqm-n button{margin-left:auto}
- .xqm tr.xqm-his{background:#fbfcfd;padding:10px 14px}
+ .xqm tr.xqm-his{display:block;background:#fbfcfd;padding:10px 14px}
  .xqm tr.xqm-his td{display:block;padding:0}
  .xqm tr.xqm-his td::before{content:none}
+ /* 超窄屏（≤350px）：字号收敛 */
+ @media(max-width:350px){
+  .xqm td{gap:6px;font-size:12.5px}
+  .xqm td::before{font-size:11px}
+  .xqm td.xqm-t,.xqm td.xqm-age{grid-column:1/-1}
+ }
 }
 """
 

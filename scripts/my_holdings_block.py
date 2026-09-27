@@ -36,27 +36,39 @@ def my_holdings_css():
  .myh tr.alert td{background:#fdeaea}
  .myh tr.buy td{background:#e8f7ee}
 
-@media(max-width:640px){
- /* 持仓回撤表 → 卡片：标签左定宽 / 数值右对齐 / 提醒整宽左对齐 */
+@media(max-width:740px){
+ /* 持仓回撤表 → 紧凑卡片：标的|代码 同行，最高|当前 同行，回落整宽，
+    提醒整宽（无提醒则整行隐藏）；数值列右对齐。 */
+ .myh{margin-top:16px;padding-top:14px;border-top:1px solid #eef0f3}
  .myh table{display:block;background:none;border:none;box-shadow:none}
  .myh thead{display:none}
- .myh tbody,.myh tr,.myh td{display:block}
- .myh tr{background:#fff;border:1px solid #eef0f3;border-radius:12px;
-   padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+ .myh tbody{display:block}
+ .myh tr{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:2px;background:#fff;
+   border:1px solid #eef0f3;border-radius:12px;padding:11px 14px;margin-bottom:10px;
+   box-shadow:0 1px 3px rgba(16,24,40,.05)}
  .myh tr.alert{background:#fdeaea;border-color:#f5c2c7}
  .myh tr.buy{background:#e8f7ee;border-color:#b7e4c7}
- .myh td{display:flex;gap:10px;align-items:baseline;border:none;padding:4px 0;
-   font-size:13px;font-variant-numeric:tabular-nums}
- .myh td::before{content:attr(data-label);flex:0 0 70px;color:#8a94a6;
-   font-weight:600;font-size:12px;letter-spacing:.2px}
- .myh td.myh-num{justify-content:space-between}
- .myh td.myh-num > *{margin-left:auto}
- .myh td.cell-main{display:block;font-size:15px;font-weight:600;padding:0 0 8px;
-   margin-bottom:6px;border-bottom:1px solid rgba(0,0,0,.06)}
+ .myh td{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border:none;
+   padding:0;min-width:0;font-size:13px;line-height:1.55;font-variant-numeric:tabular-nums}
+ .myh td::before{content:attr(data-label);flex:0 0 auto;color:#8a94a6;font-weight:600;
+   font-size:11.5px;letter-spacing:.2px}
+ .myh td.cell-main{grid-column:1/2;font-size:15px;font-weight:600;padding:0 14px 6px 0;
+   margin:0 -14px 3px 0;border-bottom:1px solid rgba(0,0,0,.07)}
  .myh td.cell-main::before{content:none}
- .myh td.cell-rem{display:block;padding-top:2px}
- .myh td.cell-rem::before{display:block;margin-bottom:3px}
- .myh .myh-code{font-size:12px;color:#9aa4b2;font-weight:400}
+ .myh td.myh-code{grid-column:2/3;justify-content:flex-end;align-self:start;font-size:11.5px;
+   color:#9aa4b2;padding:0 0 6px;margin-bottom:3px;border-bottom:1px solid rgba(0,0,0,.07)}
+ .myh td.myh-code::before{content:none}
+ .myh td[data-label="盈利回落"]{grid-column:1/-1}
+ .myh td.cell-rem{grid-column:1/-1;justify-content:flex-start;flex-wrap:wrap;gap:6px;
+   padding-top:1px}
+ .myh td.cell-rem::before{flex:0 0 auto}
+ .myh td.rem-empty{display:none}
+ /* 超窄屏（≤350px）：字号收敛 + 提醒可折行 */
+ @media(max-width:350px){
+  .myh td{gap:6px;font-size:12.5px}
+  .myh td::before{font-size:11px}
+  .myh td.cell-rem > span{min-width:0;overflow-wrap:anywhere;white-space:normal}
+ }
 }
 """
 
@@ -107,7 +119,8 @@ def my_holdings_js():
       '<td class="myh-num" data-label="最高盈利">'+pct(h.ytd_high_profit_pct)+'</td>'+
       '<td class="myh-num" data-label="当前盈利">'+pct(h.current_profit_pct)+'</td>'+
       '<td class="myh-num" data-label="盈利回落">'+ddCell(h.profit_drawdown_pct)+'</td>'+
-      '<td class="cell-rem" data-label="提醒">'+rem+'</td></tr>';
+      '<td class="cell-rem'+(alert?'':' rem-empty')+'" data-label="提醒">'+rem+'</td>'+
+      '</tr>';
   }
   function render(list){
     var root=document.getElementById('myh-root');
