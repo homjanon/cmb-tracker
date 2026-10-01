@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-30",
+  "updated_at": "2026-10-01",
   "items": [
     {
       "code": "600036",
@@ -29,48 +29,48 @@
       "code": "QQQM",
       "name": "Invesco纳指100ETF",
       "ytd_high_profit_pct": 9.59,
-      "current_profit_pct": 8.16,
-      "profit_drawdown_pct": 1.43,
+      "current_profit_pct": 8.45,
+      "profit_drawdown_pct": 1.15,
       "reminder": ""
     },
     {
       "code": "050025",
       "name": "博时标普500A",
       "ytd_high_profit_pct": 4.4,
-      "current_profit_pct": 2.41,
-      "profit_drawdown_pct": 1.99,
+      "current_profit_pct": 2.26,
+      "profit_drawdown_pct": 2.14,
       "reminder": ""
     },
     {
       "code": "020741",
       "name": "华泰保兴安悦债券C",
       "ytd_high_profit_pct": 4.56,
-      "current_profit_pct": 4.56,
-      "profit_drawdown_pct": 0.0,
+      "current_profit_pct": 3.98,
+      "profit_drawdown_pct": 0.58,
       "reminder": ""
     },
     {
       "code": "020602",
       "name": "易方达红利低波A",
       "ytd_high_profit_pct": 7.86,
-      "current_profit_pct": -1.45,
-      "profit_drawdown_pct": 9.31,
+      "current_profit_pct": -0.06,
+      "profit_drawdown_pct": 7.91,
       "reminder": ""
     },
     {
       "code": "021277",
       "name": "广发全球精选C",
       "ytd_high_profit_pct": 17.93,
-      "current_profit_pct": -2.27,
-      "profit_drawdown_pct": 20.2,
-      "reminder": "已回落≥20点，当前亏损中，可考虑加大买入"
+      "current_profit_pct": -1.61,
+      "profit_drawdown_pct": 19.54,
+      "reminder": "已回落≥15点，当前亏损中，可考虑分批接回"
     },
     {
       "code": "026096",
       "name": "易方达创业板50C",
       "ytd_high_profit_pct": 27.02,
-      "current_profit_pct": -10.03,
-      "profit_drawdown_pct": 37.05,
+      "current_profit_pct": -10.19,
+      "profit_drawdown_pct": 37.21,
       "reminder": "已回落≥25点，当前亏损中，可考虑加倍"
     }
   ]
