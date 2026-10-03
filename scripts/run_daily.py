@@ -17,6 +17,7 @@ import fetch_fundamentals as ff
 from zhaozhao_five_dim import (Fundamentals, score_all, buy_signal, SIGNAL_CN)
 import render_html
 import render_report
+from trade_calendar import is_trade_day
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FUND_JSON = os.path.join(ROOT, "fundamentals.json")
@@ -152,6 +153,12 @@ def main():
 
 def _append_history(rows, t0):
     today = t0.strftime("%Y-%m-%d")
+    # 门控（2026-10-03）：非交易日不写历史。
+    # 与 workflow 的 check 步骤共用同一判据（trade_calendar.is_trade_day），
+    # 避免「门控判为非交易日、写入侧却落盘」的半闭环（周末/法定假期写入重复行）。
+    if not is_trade_day(today):
+        print(f"    {today} 非交易日，跳过写入历史（防周末/假期污染）")
+        return
     # 去重：若今日已有记录则覆盖
     existing = []
     if os.path.exists(HISTORY):

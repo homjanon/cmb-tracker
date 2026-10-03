@@ -1,20 +1,26 @@
 name: 招招五维·五大行每日追踪
 
-# 自动运行触发方案（盘后 · 仅交易日 · 单次）
+# 触发与门控（盘后 · 仅交易日 · 单次）
 # =====================================================================
-# 与 xiaoxu-fear (xxfi-daily.yml) 保持一致：
-#   1) 交易日筛选：cron 仅覆盖周一至五；且 check 步骤用交易日历
-#      (tool_trade_date_hist_sina) 精确排除法定节假日/休市日（含调休）。
-#   2) 执行时机：cron "10 7 * * 1-5" = 北京 15:10。GitHub Actions 实际存在约 1h 排队/延迟，
-#      实跑约 16:10 后；已按用户要求调整为更早触发。
-#   3) 每日频次：盘后单次。非交易日由 check 步骤 skip。
-#
-# 手动触发（workflow_dispatch）：
-#   任意时间（含周末/非交易日）强制运行当前脚本。
+# 触发：唯一通道 = Cloudflare Worker `qdii-dispatch` 每日北京 16:30 调
+#       workflow_dispatch（GitHub 侧无 schedule，禁止再加）。
+#       Worker 只做「周一~周五」粗筛；**法定假期由本文件的 check 步骤用交易日历
+#       (tool_trade_date_hist_sina) 精确排除**。
+# 门控：check 步骤判定当日是否交易日 → 输出 trade=1/0；后续各步骤条件：
+#         if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
+#       ⚠️ 绝不可写成 `github.event_name == 'workflow_dispatch'`：单通道下该条件恒为真，
+#          门控会被永久绕过（2026-10-03 事故，详见 README「踩坑记录」）。
+# 手动：Actions 页面勾选 force=true → 忽略门控强制运行（补算 / 盘中快照）；
+#       不勾（默认 false）→ 与自动调度同门控。
 # =====================================================================
 on:
-  # 单通道（2026-09-02 起）：由 Cloudflare Worker qdii-dispatch 每天 16:30（北京时间）触发 workflow_dispatch（原 GitHub schedule 已移除，非交易日由下方 check 门控跳过）
+  # 单通道：Cloudflare Worker qdii-dispatch 每天 16:30（北京时间）触发 workflow_dispatch
   workflow_dispatch:
+    inputs:
+      force:
+        description: "强制运行：忽略『仅交易日』门控（仅供人工补算或盘中快照；自动调度不得传）"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -50,11 +56,12 @@ jobs:
         run: |
           python - <<'PY'
           import akshare as ak, datetime, os
-          today = datetime.date.today().strftime("%Y-%m-%d")
+          BJ = datetime.timezone(datetime.timedelta(hours=8))
+          today = datetime.datetime.now(BJ).strftime("%Y-%m-%d")
           cal = ak.tool_trade_date_hist_sina()
           is_trade = today in {str(x)[:10] for x in cal["trade_date"].tolist()}
           if not is_trade:
-              print(f"{today} 非交易日（节假日/周末），跳过当日计算（手动触发仍可执行）")
+              print(f"{today} 非交易日（节假日/周末），跳过当日计算（勾选 force 可强制运行）")
               open(os.environ["GITHUB_OUTPUT"], "a").write("trade=0\n")
               raise SystemExit(0)
           print(f"{today} 交易日，执行五维追踪")
@@ -64,7 +71,7 @@ jobs:
       - name: Run holdings drawdown (小散持仓回撤表)
         # 必须先于 run_daily 渲染：run_daily 读取 holdings_drawdown.json 注入网页，
         # 若渲染在前，新增标的/改成本要再触发一次才生效（顺序坑，2026-08-06 修复）
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         env:
           TZ: Asia/Shanghai
           HOLDINGS_JSON: ${{ secrets.HOLDINGS_JSON }}
@@ -72,7 +79,7 @@ jobs:
           python scripts/holdings_drawdown.py
 
       - name: Run daily tracker
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         env:
           TZ: Asia/Shanghai
           BIYING_API_KEY: ${{ secrets.BIYING_API_KEY }}
@@ -81,7 +88,7 @@ jobs:
           python run_daily.py
 
       - name: Commit & push results
-        if: steps.check.outputs.trade == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
