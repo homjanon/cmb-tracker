@@ -28,9 +28,8 @@ XQ_TABLE_CSS = """
  .xqm-age{color:#aaa;font-size:12px;white-space:nowrap}
  .xqm-q{color:#444;line-height:1.6}
  .xqm-qty{white-space:nowrap;font-variant-numeric:tabular-nums;color:#c23531;font-weight:600}
- .xqm-lock{margin-left:5px;padding:1px 5px;border-radius:8px;background:#f2f4f7;color:#8a94a6;
-   font-size:10.5px;font-weight:600;white-space:nowrap;font-weight:600}
- .xqm-lock::before{content:"🔒 "}
+ .xqm-lock{margin-left:5px;padding:1px 6px;border-radius:8px;background:#f2f4f7;
+   color:#8a94a6;font-size:10.5px;font-weight:600;white-space:nowrap}
  .xqm-n{text-align:center;white-space:nowrap}
  .xqm-n button{border:none;background:#eef2f7;color:#3a4a5e;font-size:12px;font-weight:600;
    padding:2px 8px;border-radius:10px;cursor:pointer;font-family:inherit}
@@ -134,7 +133,7 @@ XQ_TABLE_JS = r"""
     // 数量列：人工锁定标的（mentions.json 里带 qty_locked，见 xueqiu-tracker
     // config.QTY_LOCKED）额外挂「🔒 人工」角标——该数值由人工维护，不随自动抽取更新。
     var qCell=L.qty
-      ? esc(L.qty)+(L.qty_locked?'<span class="xqm-lock" title="人工维护，不随自动抽取更新"></span>':'')
+      ? esc(L.qty)+(L.qty_locked?'<span class="xqm-lock" title="人工维护，不随自动抽取更新">🔒 人工</span>':'')
       : '<span style="color:#ccc">—</span>';
     var nCell=his.length
       ? '<button type="button" data-t="'+idx+'">'+s.mention_count+'</button>'
