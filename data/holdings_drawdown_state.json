@@ -2,13 +2,13 @@
   "year": 2026,
   "items": {
     "600036": {
-      "ytd_high": 41.83,
-      "ytd_high_date": "2026-09-14",
+      "ytd_high": 42.76,
+      "ytd_high_date": "2026-10-12",
       "level": 0
     },
     "03968": {
-      "ytd_high": 53.35,
-      "ytd_high_date": "2026-09-04",
+      "ytd_high": 53.8,
+      "ytd_high_date": "2026-10-12",
       "level": 0
     },
     "QQQM": {
@@ -62,6 +62,6 @@
       "level": 0
     }
   },
-  "updated_at": "2026-10-09",
+  "updated_at": "2026-10-12",
   "anchor_ver": 2
 }
