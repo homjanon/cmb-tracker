@@ -39,7 +39,7 @@
     "021277": {
       "ytd_high": 7.5651,
       "ytd_high_date": "2026-06-22",
-      "level": 3
+      "level": 4
     },
     "026096": {
       "ytd_high": 1.3422,
@@ -62,6 +62,6 @@
       "level": 0
     }
   },
-  "updated_at": "2026-10-15",
+  "updated_at": "2026-10-16",
   "anchor_ver": 2
 }
