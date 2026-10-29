@@ -47,8 +47,8 @@
       "level": 4
     },
     "600900": {
-      "ytd_high": 29.86,
-      "ytd_high_date": "2026-10-26",
+      "ytd_high": 29.99,
+      "ytd_high_date": "2026-10-29",
       "level": 0
     },
     "160213": {
@@ -62,6 +62,6 @@
       "level": 0
     }
   },
-  "updated_at": "2026-10-28",
+  "updated_at": "2026-10-29",
   "anchor_ver": 2
 }
