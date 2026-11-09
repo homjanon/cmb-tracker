@@ -54,14 +54,14 @@
     "160213": {
       "ytd_high": 4.98,
       "ytd_high_date": "2025-11-10",
-      "level": 2
+      "level": 3
     },
     "003376": {
-      "ytd_high": 1.4012,
-      "ytd_high_date": "2026-11-05",
+      "ytd_high": 1.4033,
+      "ytd_high_date": "2026-11-09",
       "level": 0
     }
   },
-  "updated_at": "2026-11-06",
+  "updated_at": "2026-11-09",
   "anchor_ver": 2
 }
