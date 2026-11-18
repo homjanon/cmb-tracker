@@ -160,11 +160,13 @@ python run_daily.py
 
 **触发（单通道）**：Cloudflare Worker `qdii-dispatch`（心跳每 5 分钟）每日**北京时间 16:30** 调用 `workflow_dispatch`。GitHub 侧**无 schedule**。16:30 时 A 股已收盘、数据完整。
 
-**门控**：`check` 步骤用交易日历 `tool_trade_date_hist_sina` 判定当日是否交易日（北京时间），输出 `trade=1/0`；后续各步骤条件为
+**门控**：`check` 步骤执行 `python scripts/trade_calendar.py --gate` 判定当日是否交易日（北京时间），输出 `trade=1/0`；后续各步骤条件为
 
 ```yaml
 if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
 ```
+
+判据取数顺序（2026-11-18 加固）：① akshare 日历 `calendar_trade_date_hist_sina`（旧名 `tool_trade_date_hist_sina` 兜底，兼容两版 akshare）→ ② 日历挂掉则用腾讯行情时间戳 `parts[30]`（600036，日期==今天即交易日，不同数据源/风控面）→ ③ 两级全挂时**显式失败退出**，绝不静默放行；日历数据本身过期（最晚日期 < 今天）同样直接报错。详见「踩坑记录 ⑨」。
 
 - Worker 自动调度**不传** `force` → 严格走门控，非交易日（周末 / 法定假期）**全部步骤 skip**。
 - 人工在 Actions 页面**勾选 `force=true`** → 忽略门控强制运行（补算 / 盘中快照）。
@@ -330,6 +332,17 @@ cmb-tracker/
 - **现象**：改了雪球板块的数量角标并推送成功、CI 也 success，但线上看板看不到改动。
 - **根因**：workflow 的「仅交易日」门控同时挡住了 `run daily tracker` 与 `Commit & push` → `docs/index.html` **根本没被重新渲染**（当天成功的那次运行只是 Pages 的 Jekyll 发布，用的是仓库里的旧 HTML）。
 - **做法**：前端（`scripts/*.py` 模板 / CSS / JS）改动若需立即上线，**手动触发时勾 `force=true`** 强制渲染一轮，等 `chore: daily update` 提交 + Pages 部署完成再验收；否则等到下一个交易日自动生效。判断依据：`git log` 里是否出现新的 `chore: daily update` 提交。
+
+**⑨ akshare 更名导致门控连挂三天（2026-11-18）**
+- **现象**：11-16 / 11-17 / 11-18 连续三天 run 全部 failure，24 秒即挂，最后一次成功是 11-13。
+- **报错**：`AttributeError: tool_trade_date_hist_sina 已在 1.20.45 更名为 calendar_trade_date_hist_sina`。
+- **根因（两层）**：
+  1. `requirements.txt` 写的是 `akshare>=1.14.0`（**无上界**），CI 每次 `pip install` 都拿最新版；akshare 用 `data/renames.json` 维护 410 条更名，旧名访问直接抛 `AttributeError`。
+  2. **同一判据存在两份实现**：`daily.yml` 的 `check` 步骤内联了一段 akshare 调用，`scripts/trade_calendar.py` 里还有一份 → 改一处漏一处（本次正是两份都用了旧名）。
+- **修复**：① 一律「**新名优先 + 旧名兜底**」（`getattr(ak, 新名, None) or getattr(ak, 旧名, None)`），两版 akshare 都能跑；② `check` 步骤改为只调 `python scripts/trade_calendar.py --gate`，判据真正收敛到一处；③ 加**腾讯行情时间戳兜底**（600036 的 `parts[30]`，日期==今天即交易日，属不同数据源/风控面）；④ akshare + 腾讯都挂时 `--gate` **显式失败退出**，不静默放行；⑤ 日历数据本身过期（最晚日期 < 今天）也直接报错，堵住「天天静默跳过、Actions 还全绿」。
+- **约束**：
+  - **不要**把 akshare 调用内联回 `daily.yml`，也不要硬编码单一接口名。
+  - 升级/依赖浮动导致 akshare 变版本时，先对照 `akshare/data/renames.json` 扫一遍本项目所用接口（当前 6 个：`calendar_trade_date_hist_sina` / `stock_yjbb_em` / `stock_history_dividend_detail` / `stock_financial_analysis_indicator_em` / `stock_research_report_em` / `stock_zh_a_spot_em`）。
 
 ---
 

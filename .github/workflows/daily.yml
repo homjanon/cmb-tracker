@@ -4,8 +4,9 @@ name: 招招五维·五大行每日追踪
 # =====================================================================
 # 触发：唯一通道 = Cloudflare Worker `qdii-dispatch` 每日北京 16:30 调
 #       workflow_dispatch（GitHub 侧无 schedule，禁止再加）。
-#       Worker 只做「周一~周五」粗筛；**法定假期由本文件的 check 步骤用交易日历
-#       (tool_trade_date_hist_sina) 精确排除**。
+#       Worker 只做「周一~周五」粗筛；**法定假期由 check 步骤精确排除**。
+#       判据唯一来源 = scripts/trade_calendar.py --gate（禁止在本文件内联复制 akshare 调用：
+#       2026-11-18 前这里内联了一份，akshare 更名后改一处漏一处，连挂三天）。
 # 门控：check 步骤判定当日是否交易日 → 输出 trade=1/0；后续各步骤条件：
 #         if: steps.check.outputs.trade == '1' || github.event.inputs.force == 'true'
 #       ⚠️ 绝不可写成 `github.event_name == 'workflow_dispatch'`：单通道下该条件恒为真，
@@ -50,23 +51,13 @@ jobs:
           pip install -r requirements.txt
 
       # 交易日判断：非交易日(节假日/周末) → skip
-      # （手动触发时仍会继续，直接取当日或最近交易日数据）
+      # 判据唯一来源 = scripts/trade_calendar.py（akshare 日历 → 腾讯时间戳兜底 → 显式失败）
+      # ⚠️ 不要再把 akshare 调用内联回本文件：2026-11-16~18 因 akshare 更名
+      #    (tool_trade_date_hist_sina → calendar_trade_date_hist_sina) 连挂三天，
+      #    根因正是"同一判据存在两份实现，改一处漏一处"。
       - name: 判断交易日
         id: check
-        run: |
-          python - <<'PY'
-          import akshare as ak, datetime, os
-          BJ = datetime.timezone(datetime.timedelta(hours=8))
-          today = datetime.datetime.now(BJ).strftime("%Y-%m-%d")
-          cal = ak.tool_trade_date_hist_sina()
-          is_trade = today in {str(x)[:10] for x in cal["trade_date"].tolist()}
-          if not is_trade:
-              print(f"{today} 非交易日（节假日/周末），跳过当日计算（勾选 force 可强制运行）")
-              open(os.environ["GITHUB_OUTPUT"], "a").write("trade=0\n")
-              raise SystemExit(0)
-          print(f"{today} 交易日，执行五维追踪")
-          open(os.environ["GITHUB_OUTPUT"], "a").write("trade=1\n")
-          PY
+        run: python scripts/trade_calendar.py --gate
 
       - name: Run holdings drawdown (小散持仓回撤表)
         # 必须先于 run_daily 渲染：run_daily 读取 holdings_drawdown.json 注入网页，
