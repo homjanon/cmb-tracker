@@ -14,7 +14,7 @@
     "QQQM": {
       "ytd_high": 311.94,
       "ytd_high_date": "2026-10-08",
-      "level": 1
+      "level": 2
     },
     "014002": {
       "ytd_high": 4.543,
@@ -32,8 +32,8 @@
       "level": 0
     },
     "020602": {
-      "ytd_high": 1.1673,
-      "ytd_high_date": "2025-11-13",
+      "ytd_high": 1.1538,
+      "ytd_high_date": "2025-11-20",
       "level": 0
     },
     "021277": {
@@ -47,8 +47,8 @@
       "level": 4
     },
     "600900": {
-      "ytd_high": 29.99,
-      "ytd_high_date": "2026-10-29",
+      "ytd_high": 30.68,
+      "ytd_high_date": "2026-11-18",
       "level": 0
     },
     "160213": {
@@ -67,6 +67,6 @@
       "level": 2
     }
   },
-  "updated_at": "2026-11-13",
+  "updated_at": "2026-11-18",
   "anchor_ver": 2
 }
