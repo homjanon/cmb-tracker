@@ -1,27 +1,27 @@
 {
-  "updated_at": "2026-11-18",
+  "updated_at": "2026-11-19",
   "items": [
     {
       "code": "600036",
       "name": "招商银行",
       "ytd_high_profit_pct": 19.12,
-      "current_profit_pct": 17.94,
-      "profit_drawdown_pct": 1.18,
+      "current_profit_pct": 18.49,
+      "profit_drawdown_pct": 0.63,
       "reminder": ""
     },
     {
       "code": "03968",
       "name": "招商银行H",
       "ytd_high_profit_pct": 52.28,
-      "current_profit_pct": 50.88,
-      "profit_drawdown_pct": 1.4,
+      "current_profit_pct": 50.05,
+      "profit_drawdown_pct": 2.23,
       "reminder": ""
     },
     {
       "code": "600900",
       "name": "长江电力",
-      "ytd_high_profit_pct": 12.61,
-      "current_profit_pct": 12.61,
+      "ytd_high_profit_pct": 13.35,
+      "current_profit_pct": 13.35,
       "profit_drawdown_pct": 0.0,
       "reminder": ""
     },
@@ -29,8 +29,8 @@
       "code": "QQQM",
       "name": "Invesco纳指100ETF",
       "ytd_high_profit_pct": 11.05,
-      "current_profit_pct": -3.73,
-      "profit_drawdown_pct": 14.78,
+      "current_profit_pct": -3.32,
+      "profit_drawdown_pct": 14.37,
       "reminder": "已回落≥10点，当前亏损中，暂不减仓锁利"
     },
     {
