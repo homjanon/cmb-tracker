@@ -2,8 +2,8 @@
   "year": 2026,
   "items": {
     "600036": {
-      "ytd_high": 43.55,
-      "ytd_high_date": "2026-10-30",
+      "ytd_high": 44.0,
+      "ytd_high_date": "2026-11-20",
       "level": 0
     },
     "03968": {
@@ -47,8 +47,8 @@
       "level": 4
     },
     "600900": {
-      "ytd_high": 30.88,
-      "ytd_high_date": "2026-11-19",
+      "ytd_high": 31.62,
+      "ytd_high_date": "2026-11-20",
       "level": 0
     },
     "160213": {
@@ -67,6 +67,6 @@
       "level": 2
     }
   },
-  "updated_at": "2026-11-19",
+  "updated_at": "2026-11-20",
   "anchor_ver": 2
 }
