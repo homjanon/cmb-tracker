@@ -1,76 +1,76 @@
 {
-  "updated_at": "2026-11-23",
+  "updated_at": "2026-11-24",
   "items": [
     {
       "code": "600036",
       "name": "招商银行",
       "ytd_high_profit_pct": 20.35,
-      "current_profit_pct": 18.33,
-      "profit_drawdown_pct": 2.02,
+      "current_profit_pct": 19.04,
+      "profit_drawdown_pct": 1.31,
       "reminder": ""
     },
     {
       "code": "03968",
       "name": "招商银行H",
       "ytd_high_profit_pct": 52.28,
-      "current_profit_pct": 49.07,
-      "profit_drawdown_pct": 3.21,
+      "current_profit_pct": 48.65,
+      "profit_drawdown_pct": 3.63,
       "reminder": ""
     },
     {
       "code": "600900",
       "name": "长江电力",
-      "ytd_high_profit_pct": 16.06,
-      "current_profit_pct": 15.07,
-      "profit_drawdown_pct": 0.99,
+      "ytd_high_profit_pct": 16.14,
+      "current_profit_pct": 16.14,
+      "profit_drawdown_pct": 0.0,
       "reminder": ""
     },
     {
       "code": "QQQM",
       "name": "Invesco纳指100ETF",
       "ytd_high_profit_pct": 11.05,
-      "current_profit_pct": -10.57,
-      "profit_drawdown_pct": 21.61,
-      "reminder": "已回落≥20点，当前亏损中，可考虑加大买入"
+      "current_profit_pct": -4.61,
+      "profit_drawdown_pct": 15.65,
+      "reminder": "已回落≥15点，当前亏损中，可考虑分批接回"
     },
     {
       "code": "050025",
       "name": "博时标普500A",
       "ytd_high_profit_pct": 4.4,
-      "current_profit_pct": -4.33,
-      "profit_drawdown_pct": 8.72,
+      "current_profit_pct": -3.56,
+      "profit_drawdown_pct": 7.95,
       "reminder": ""
     },
     {
       "code": "017091",
       "name": "景顺长城纳指科技",
       "ytd_high_profit_pct": 3.16,
-      "current_profit_pct": -16.86,
-      "profit_drawdown_pct": 20.02,
-      "reminder": "已回落≥20点，当前亏损中，可考虑加大买入"
+      "current_profit_pct": -22.01,
+      "profit_drawdown_pct": 25.17,
+      "reminder": "已回落≥25点，当前亏损中，可考虑加倍"
     },
     {
       "code": "020602",
       "name": "易方达红利低波A",
       "ytd_high_profit_pct": 5.79,
-      "current_profit_pct": 5.79,
-      "profit_drawdown_pct": 0.0,
+      "current_profit_pct": 4.69,
+      "profit_drawdown_pct": 1.1,
       "reminder": ""
     },
     {
       "code": "080006",
       "name": "长盛环球行业A",
       "ytd_high_profit_pct": 13.51,
-      "current_profit_pct": -2.42,
-      "profit_drawdown_pct": 15.93,
-      "reminder": "已回落≥15点，当前亏损中，可考虑分批接回"
+      "current_profit_pct": -7.56,
+      "profit_drawdown_pct": 21.07,
+      "reminder": "已回落≥20点，当前亏损中，可考虑加大买入"
     },
     {
       "code": "003376",
       "name": "广发中债7-10年A",
       "ytd_high_profit_pct": 1.34,
-      "current_profit_pct": 0.91,
-      "profit_drawdown_pct": 0.43,
+      "current_profit_pct": 0.85,
+      "profit_drawdown_pct": 0.49,
       "reminder": ""
     }
   ]
