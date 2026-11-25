@@ -47,8 +47,8 @@
       "level": 4
     },
     "600900": {
-      "ytd_high": 31.64,
-      "ytd_high_date": "2026-11-24",
+      "ytd_high": 31.96,
+      "ytd_high_date": "2026-11-25",
       "level": 0
     },
     "160213": {
@@ -64,14 +64,14 @@
     "017091": {
       "ytd_high": 3.019,
       "ytd_high_date": "2026-09-22",
-      "level": 4
+      "level": 2
     },
     "080006": {
       "ytd_high": 1.4376,
       "ytd_high_date": "2026-10-09",
-      "level": 3
+      "level": 2
     }
   },
-  "updated_at": "2026-11-24",
+  "updated_at": "2026-11-25",
   "anchor_ver": 2
 }
